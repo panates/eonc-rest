@@ -1,10 +1,9 @@
 /*
- * Tests for mounting capabilities (extended from connect)
- * Original file ([connect]/test/mounting.js)
+ * Tests for endpoints
  */
 
 const assert = require('assert');
-const eonc = require('..');
+const rest = require('..');
 const http = require('http');
 const request = require('supertest');
 
@@ -16,8 +15,8 @@ describe('app.use(endpoint)', function () {
         let ep;
 
         beforeEach(function () {
-            app = eonc.server();
-            ep = eonc.endpoint();
+            app = rest.server();
+            ep = rest.endpoint();
         });
 
         it('should handle all methods', function (done) {
@@ -140,7 +139,7 @@ describe('app.use(endpoint)', function () {
         it('should catch Http errors', function (done) {
 
             ep.GET(function (req, res) {
-                throw new eonc.HttpError(400);
+                throw new rest.HttpError(400);
             });
 
             app.use('/blog', ep);
@@ -170,8 +169,8 @@ describe('app.use(endpoint)', function () {
         let ep;
 
         beforeEach(function () {
-            app = eonc.server();
-            ep = eonc.endpoint();
+            app = rest.server();
+            ep = rest.endpoint();
         });
 
         it('should handle string type definitions', function (done) {

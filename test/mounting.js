@@ -4,7 +4,7 @@
  */
 
 const assert = require('assert');
-const eonc = require('..');
+const rest = require('..');
 const http = require('http');
 const request = require('supertest');
 
@@ -12,7 +12,7 @@ describe('app.use(middleware)', function(){
     let app;
 
     beforeEach(function(){
-        app = eonc.server();
+        app = rest.server();
     });
 
     it('should match all paths with "/"', function (done) {
@@ -137,7 +137,7 @@ describe('app.use(middleware)', function(){
 
     describe('with a connect app', function(){
         it('should mount', function(done){
-            let blog = eonc.server();
+            let blog = rest.server();
 
             blog.use(function(req, res){
                 assert.equal(req.url, '/');
@@ -152,7 +152,7 @@ describe('app.use(middleware)', function(){
         });
 
         it('should retain req.originalUrl', function(done){
-            let app = eonc.server();
+            let app = rest.server();
 
             app.use('/blog', function(req, res){
                 res.end(req.originalUrl);
@@ -174,7 +174,7 @@ describe('app.use(middleware)', function(){
         });
 
         it('should strip trailing slash', function(done){
-            let blog = eonc.server();
+            let blog = rest.server();
 
             blog.use(function(req, res){
                 assert.equal(req.url, '/');
@@ -189,8 +189,8 @@ describe('app.use(middleware)', function(){
         });
 
         it('should set .route', function(){
-            let blog = eonc.server();
-            let admin = eonc.server();
+            let blog = rest.server();
+            let admin = rest.server();
             app.use('/blog', blog);
             blog.use('/admin', admin);
             assert.equal(app.route, '/');

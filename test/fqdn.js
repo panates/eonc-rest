@@ -4,15 +4,14 @@
  */
 
 const assert = require('assert');
-const eonc = require('..');
+const rest = require('..');
 const http = require('http');
-const request = require('supertest');
 
 describe('app.use()', function(){
     let app;
 
     beforeEach(function(){
-        app = eonc.server();
+        app = rest.server();
     });
 
     it('should not obscure FQDNs', function(done){

@@ -3,12 +3,12 @@
  * Original file ([connect]/test/app.listen.js)
  */
 
-const eonc = require('..');
+const rest = require('..');
 const request = require('supertest');
 
 describe('app.listen()', function(){
     it('should wrap in an http.Server', function(done){
-        let app = eonc.server();
+        let app = rest.server();
 
         app.use(function(req, res){
             res.end();
