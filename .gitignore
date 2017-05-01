@@ -1,0 +1,5 @@
+node_modules
+coverage/
+test.js
+.DS_Store
+.idea
