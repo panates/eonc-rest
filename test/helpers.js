@@ -29,5 +29,16 @@ describe('helpers', function () {
         });
     });
 
+    describe('parseDate', function () {
+
+        it('should return back if value is instance of Date', function (done) {
+
+            let d = new Date();
+            assert.equal(helpers.parseDate(d), d);
+            done();
+        });
+
+    });
+
 
 });
