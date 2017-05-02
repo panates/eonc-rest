@@ -9,9 +9,9 @@ const request = require('supertest');
 
 describe('Schema', function () {
 
-    describe('Define type from string', function () {
+    let schema = rest.schema("ns1:http://any.test.url");
 
-        let schema = rest.schema("ns1:http://any.test.url");
+    describe('Define type from string', function () {
 
         it('should parse type name', function (done) {
 
@@ -50,6 +50,14 @@ describe('Schema', function () {
             schema.define("prm4", "integer[1-5]");
             let prm = schema.get("prm4");
             assert.ok(prm.minOccurs === 1 && prm.maxOccurs === 5);
+            done();
+        });
+
+        it('should parse min/max Occurs (max value only)', function (done) {
+
+            schema.define("prm4_1", "integer[5]");
+            let prm = schema.get("prm4_1");
+            assert.ok(!prm.minOccurs && prm.maxOccurs === 5);
             done();
         });
 
@@ -110,7 +118,154 @@ describe('Schema', function () {
             done();
         });
 
+        it('should not call parseTypeDef with unkown type string', function (done) {
+
+            let ok;
+            try {
+                rest.Schema.parseTypeDef("name", "ns1:abcd");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not call parseTypeString with empty string def', function (done) {
+
+            let ok;
+            try {
+                rest.Schema.parseTypeString("name", "");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not define min/max value for not supported types', function (done) {
+
+            let ok;
+            try {
+                rest.Schema.parseTypeString("name", "boolean(1-5)");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not call validate  min/max value for not supported types', function (done) {
+
+            let ok;
+            try {
+                rest.Schema.parseTypeString("name", "boolean(1-5)");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+
     });
+
+
+    describe('Define type from object', function () {
+
+        it('should use string definition in type object', function (done) {
+
+            schema.define("prm20", {
+                type: "string?(1-5)[0-10]" + /\w+/
+            });
+            let prm = schema.get("prm20");
+            assert.equal(prm.type, "string");
+
+            schema.define("prm21", {
+                type: "ns1:prm"
+            });
+            prm = schema.get("prm21");
+            assert.equal(prm.type, "prm");
+
+            done();
+        });
+
+        it('should define "object" items from string ', function (done) {
+
+            schema.define("prm30", {
+                type: "object",
+                items: "a:string"
+            });
+            let prm = schema.get("prm30");
+            assert.equal(prm.items.a.type, "string");
+            done();
+        });
+
+        it('should not define "object" items from invalid string ', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm31", {
+                    type: "object",
+                    items: "a:string+"
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should define min/max Size for "string" type only', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm31", {
+                    type: "integer",
+                    minSize: 0,
+                    maxSize: 5
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should define min/max Value for "number|integer|long|double|date" types only', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm32", {
+                    type: "string",
+                    minValue: 0,
+                    maxValue: 5
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+
+        it('should not define invalid regex pattern', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm33", {
+                    type: "string",
+                    pattern: "$$+-"
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+
+    });
+
 
     describe('Convert input data to JS (internal types)', function () {
 
@@ -239,11 +394,34 @@ describe('Schema', function () {
                 .expect(400, '', done);
         });
 
+        it('should not process invalid "date" value', function (done) {
+
+            ep.all("prm1:date", function (req, res) {
+            });
+            request(app)
+                .get('/blog')
+                .query({prm1: 'abcd'})
+                .expect(400, '', done);
+        });
+
         it('should not use unknown type', function (done) {
 
             let ok;
             try {
-                ep.all("prm1:unknowntype", function (req, res) {
+                ep.all("prm1:ns1:unknown", function (req, res) {
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not use unknown ns', function (done) {
+
+            let ok;
+            try {
+                ep.all("prm1:nss1:abcd", function (req, res) {
                 });
             } catch (e) {
                 ok = true;
@@ -257,7 +435,7 @@ describe('Schema', function () {
             ep.all({
                 prm1: {
                     type: "string",
-                    onvalidate: function(name, val) {
+                    onvalidate: function (name, val) {
                         return val + "validated";
                     }
                 }
@@ -308,6 +486,7 @@ describe('Schema', function () {
         });
     });
 
+
     describe('Define and access global schemas', function () {
 
         it('should create global schema with (ns:url)', function (done) {
@@ -320,7 +499,7 @@ describe('Schema', function () {
         it('should not use "ns" more than once', function (done) {
 
             try {
-                let schema = rest.schema("ns2:http://any2.test.url");
+                let schema = rest.schema("ns2:http://any3.test.url");
                 assert.ok(false);
             } catch (e) {
             }
@@ -340,7 +519,7 @@ describe('Schema', function () {
 
         it('should create global schema with (url)', function (done) {
 
-            let schema = rest.schema("http://any3.test.url");
+            let schema = rest.schema("http://any4.test.url");
             assert.ok(!!schema.ns);
             done();
         });
