@@ -49,7 +49,7 @@ describe('Schema', function () {
         });
     });
 
-    it('Schema in action', function (done) {
+    describe('Schema in action', function () {
 
         let app;
         let ep;
@@ -73,6 +73,7 @@ describe('Schema', function () {
                 assert.equal(req.args.prm1, "123validated");
                 res.end();
             });
+
             request(app)
                 .get('/blog')
                 .query({prm1: '123'})
