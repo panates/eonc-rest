@@ -8,7 +8,7 @@
 
 const server = require('./lib/server');
 const Endpoint = require('./lib/endpoint');
-const Schema = require('./lib/schema');
+const schema = require('./lib/schema');
 const errors = require('./lib/errors');
 
 exports = module.exports = {
@@ -17,10 +17,11 @@ exports = module.exports = {
     endpoint: function () {
         return new Endpoint();
     },
-    Schema: Schema,
+    Schema: schema.Schema,
     schema: function (namespace) {
-        return new Schema(namespace);
+        return new schema.Schema(namespace);
     },
+    SchemaItem: schema.SchemaItem,
     errors: errors,
     HttpError: errors.HttpError,
     InvalidRequestError: errors.InvalidRequestError,

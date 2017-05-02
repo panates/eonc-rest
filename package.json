@@ -10,16 +10,16 @@
   "repository": "panates/eonc-rest",
   "keywords": [
     "eonc",
+    "rest",
     "web",
     "framework",
-    "web",
-    "rest",
     "restful",
-    "router",
     "app",
+    "application",
     "api",
     "endpoint",
-    "api"
+    "middleware",
+    "express"
   ],
   "dependencies": {
     "debug": "^2.6.6",
