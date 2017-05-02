@@ -61,6 +61,55 @@ describe('Schema', function () {
             done();
         });
 
+        it('should not define a type with insufficient arguments', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm6");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not define a type second time', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm6", "string");
+                schema.define("prm6", "string");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not define a type with invalid string', function (done) {
+
+            let ok;
+            try {
+                schema.define("prm6", "string&+");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not define a type with empty name', function (done) {
+
+            let ok;
+            try {
+                schema.define("", "string");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
     });
 
     describe('Convert input data to JS (internal types)', function () {
@@ -170,6 +219,68 @@ describe('Schema', function () {
                 .expect(200, '', done);
         });
 
+        it('should not process invalid "integer" value', function (done) {
+
+            ep.all("prm1:integer", function (req, res) {
+            });
+            request(app)
+                .get('/blog')
+                .query({prm1: '1.5'})
+                .expect(400, '', done);
+        });
+
+        it('should not process invalid "number" value', function (done) {
+
+            ep.all("prm1:number", function (req, res) {
+            });
+            request(app)
+                .get('/blog')
+                .query({prm1: 'abc1.5'})
+                .expect(400, '', done);
+        });
+
+        it('should not use unknown type', function (done) {
+
+            let ok;
+            try {
+                ep.all("prm1:unknowntype", function (req, res) {
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should run onvalidate', function (done) {
+
+            ep.all({
+                prm1: {
+                    type: "string",
+                    onvalidate: function(name, val) {
+                        return val + "validated";
+                    }
+                }
+            }, function (req, res) {
+                assert.equal(req.args.prm1, "123validated");
+                res.end();
+            });
+            request(app)
+                .get('/blog')
+                .query({prm1: '123'})
+                .expect(200, '', done);
+        });
+
+        it('should check optional flag', function (done) {
+
+            ep.all("prm1:string", function (req, res) {
+            });
+            request(app)
+                .get('/blog')
+                .query({prm1: ''})
+                .expect(400, '', done);
+        });
+
     });
 
 
@@ -196,5 +307,44 @@ describe('Schema', function () {
                 .expect(200, '', done);
         });
     });
+
+    describe('Define and access global schemas', function () {
+
+        it('should create global schema with (ns:url)', function (done) {
+
+            let schema = rest.schema("ns2:http://any2.test.url");
+            assert.ok(!!rest.Schema.get("ns2"));
+            done();
+        });
+
+        it('should not use "ns" more than once', function (done) {
+
+            try {
+                let schema = rest.schema("ns2:http://any2.test.url");
+                assert.ok(false);
+            } catch (e) {
+            }
+            done();
+        });
+
+        it('should not use "url" more than once', function (done) {
+
+            try {
+                let schema = rest.schema("ns5:http://any2.test.url");
+                assert.ok(false);
+            } catch (e) {
+            }
+            done();
+        });
+
+
+        it('should create global schema with (url)', function (done) {
+
+            let schema = rest.schema("http://any3.test.url");
+            assert.ok(!!schema.ns);
+            done();
+        });
+    });
+
 
 });
