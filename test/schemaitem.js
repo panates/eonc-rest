@@ -162,38 +162,50 @@ describe('SchemaItem', function () {
         });
 
         it('should check minSize and maxSize is integer number', function (done) {
-            let ok=0;
+            let ok = 0;
             try {
                 item = new SchemaItem("name", {type: "string", minSize: "abc"});
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             try {
                 item = new SchemaItem("name", {type: "string", maxSize: "abc"});
-            } catch (e) {ok++}
-            assert.ok(ok===2);
+            } catch (e) {
+                ok++
+            }
+            assert.ok(ok === 2);
             done();
         });
 
         it('should check minValue and maxValue is integer number', function (done) {
-            let ok=0;
+            let ok = 0;
             try {
                 item = new SchemaItem("name", {type: "long", minValue: "abc"});
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             try {
                 item = new SchemaItem("name", {type: "long", maxValue: "abc"});
-            } catch (e) {ok++}
-            assert.ok(ok===2);
+            } catch (e) {
+                ok++
+            }
+            assert.ok(ok === 2);
             done();
         });
 
         it('should check minOccurs and maxOccurs is integer number', function (done) {
-            let ok=0;
+            let ok = 0;
             try {
                 item = new SchemaItem("name", {type: "long", minOccurs: "abc"});
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             try {
                 item = new SchemaItem("name", {type: "long", maxOccurs: "abc"});
-            } catch (e) {ok++}
-            assert.ok(ok===2);
+            } catch (e) {
+                ok++
+            }
+            assert.ok(ok === 2);
             done();
         });
 
@@ -547,14 +559,24 @@ describe('SchemaItem', function () {
         });
 
         it('should validate "date" format', function (done) {
-            let ok;
+            let ok = 0;
             item = new SchemaItem("name", "date");
             try {
-                item.deserialize("12345");
+                item.deserialize("12.");
             } catch (e) {
-                ok = true
+                ok++
             }
-            assert.ok(ok);
+            try {
+                item.deserialize("12/");
+            } catch (e) {
+                ok++
+            }
+            try {
+                item.deserialize("1212232");
+            } catch (e) {
+                ok++
+            }
+            assert.ok(ok === 3);
             done();
         });
 
@@ -583,6 +605,32 @@ describe('SchemaItem', function () {
             } catch (e) {
                 ok++;
             }
+            assert.ok(ok === 2);
+            done();
+        });
+
+        it('should validate min/max value', function (done) {
+            let ok = 0;
+            item = new SchemaItem("name", "long(2-3)");
+            try {
+                item.deserialize("1");
+            } catch (e) {ok++}
+            try {
+                item.deserialize("5");
+            } catch (e) {ok++}
+            assert.ok(ok === 2);
+            done();
+        });
+
+        it('should validate min/max size', function (done) {
+            let ok = 0;
+            item = new SchemaItem("name", "string(2-3)");
+            try {
+                item.deserialize("a");
+            } catch (e) {ok++}
+            try {
+                item.deserialize("abcde");
+            } catch (e) {ok++}
             assert.ok(ok === 2);
             done();
         });

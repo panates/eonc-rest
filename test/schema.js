@@ -11,6 +11,7 @@ describe('Schema', function () {
 
     let schema1;
     let schema2;
+    let schema3 = new rest.Schema();
 
     it('should create schema with ns:url', function (done) {
         schema1 = rest.schema("ns1:http://any1.test.url");
@@ -59,13 +60,15 @@ describe('Schema', function () {
     });
 
     it('should not define a type second time', function (done) {
-        let ok;
+        let ok = 0;
         try {
             schema1.define("prm1", "string");
-        } catch (e) {
-            ok = true;
-        }
-        assert.ok(ok);
+        } catch (e) {ok++}
+        try {
+            schema3.define("prm1", "string");
+            schema3.define("prm1", "string");
+        } catch (e) {ok++}
+        assert.ok(ok === 2);
         done();
     });
 
@@ -99,6 +102,22 @@ describe('Schema', function () {
         let ok;
         try {
             rest.Schema.get("unknown");
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
+
+    it('should deserialize', function (done) {
+        assert.equal(schema1.deserialize("prm1", "12345"), "12345");
+        done();
+    });
+
+    it('should not deserialize unknown types', function (done) {
+        let ok;
+        try {
+            schema1.deserialize("unknown", "12345");
         } catch (e) {
             ok = true;
         }
