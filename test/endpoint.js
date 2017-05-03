@@ -206,6 +206,31 @@ describe('app.use(endpoint)', function () {
                 .expect(200, '12345abcde', done);
         });
 
+        it('should not define parameter second time', function (done) {
+
+            let ok;
+            try {
+                ep.GET("prm1:long; prm1:string", function (req, res) {});
+            } catch(e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should not set method handler second time', function (done) {
+
+            let ok;
+            try {
+                ep.GET("prm1:long; prm2:string", function (req, res) {});
+                ep.GET("prm1:long; prm2:string", function (req, res) {});
+            } catch(e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
     });
 
 

@@ -109,6 +109,15 @@ describe('SchemaItem', function () {
             done();
         });
 
+        it('should define sub items for object', function (done) {
+            item = new SchemaItem("name", {
+                type: "object",
+                items: "a:long; b:string"
+            });
+            assert.ok(item.items.a.type === "long");
+            done();
+        });
+
         it('should not use () for unsupported types', function (done) {
             let ok;
             try {
@@ -152,14 +161,39 @@ describe('SchemaItem', function () {
             done();
         });
 
-        it('should check minValue and maxValue is integer number', function (done) {
-            let ok;
+        it('should check minSize and maxSize is integer number', function (done) {
+            let ok=0;
             try {
-                item = new SchemaItem("name", {type: "string", minValue: "abc"});
-            } catch (e) {
-                ok = true;
-            }
-            assert.ok(ok);
+                item = new SchemaItem("name", {type: "string", minSize: "abc"});
+            } catch (e) {ok++}
+            try {
+                item = new SchemaItem("name", {type: "string", maxSize: "abc"});
+            } catch (e) {ok++}
+            assert.ok(ok===2);
+            done();
+        });
+
+        it('should check minValue and maxValue is integer number', function (done) {
+            let ok=0;
+            try {
+                item = new SchemaItem("name", {type: "long", minValue: "abc"});
+            } catch (e) {ok++}
+            try {
+                item = new SchemaItem("name", {type: "long", maxValue: "abc"});
+            } catch (e) {ok++}
+            assert.ok(ok===2);
+            done();
+        });
+
+        it('should check minOccurs and maxOccurs is integer number', function (done) {
+            let ok=0;
+            try {
+                item = new SchemaItem("name", {type: "long", minOccurs: "abc"});
+            } catch (e) {ok++}
+            try {
+                item = new SchemaItem("name", {type: "long", maxOccurs: "abc"});
+            } catch (e) {ok++}
+            assert.ok(ok===2);
             done();
         });
 
@@ -240,7 +274,7 @@ describe('SchemaItem', function () {
 
         it('should define "minOccurs" and "maxOccurs"', function (done) {
             item = new SchemaItem("name", {
-                type: "object",
+                type: "date",
                 minOccurs: 0,
                 maxOccurs: 10,
             });
@@ -526,7 +560,7 @@ describe('SchemaItem', function () {
 
         it('should validate pattern', function (done) {
             let ok;
-            item = new SchemaItem("name", "string"+/\d+/);
+            item = new SchemaItem("name", "string" + /\d+/);
             try {
                 item.deserialize("abcd");
             } catch (e) {

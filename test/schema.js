@@ -9,8 +9,20 @@ const request = require('supertest');
 
 describe('Schema', function () {
 
-    let schema1 = rest.schema("ns1:http://any1.test.url");
-    let schema2 = rest.schema("ns2:http://any2.test.url");
+    let schema1;
+    let schema2;
+
+    it('should create schema with ns:url', function (done) {
+        schema1 = rest.schema("ns1:http://any1.test.url");
+        assert.equal(rest.Schema.get("ns1"), schema1);
+        done();
+    });
+
+    it('should create schema with ns:url', function (done) {
+        schema2 = rest.schema("http://any2.test.url");
+        assert.equal(rest.Schema.get("ns2"), schema2);
+        done();
+    });
 
     it('should not define an ns second time', function (done) {
         let ok;
@@ -58,7 +70,7 @@ describe('Schema', function () {
     });
 
     it('should define external types', function (done) {
-        schema2.define("prm1", "ns1:prm1");
+        schema2.define("prm1", {type: "ns1:prm1"});
         assert.equal(schema2.get("prm1").type, "prm1");
         done();
     });
@@ -83,6 +95,17 @@ describe('Schema', function () {
         done();
     });
 
+    it('should not get unregistered schema', function (done) {
+        let ok;
+        try {
+            rest.Schema.get("unknown");
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
+
     describe('Schema in action', function () {
 
         let app;
@@ -92,6 +115,23 @@ describe('Schema', function () {
             app = rest.server();
             ep = rest.endpoint();
             app.use('/blog', ep);
+        });
+
+        it('should deserialize query params to request.args', function (done) {
+
+            ep.all({
+                prm1: "string",
+                prm2: "ns1:prm1"
+            }, function (req, res) {
+                assert.equal(req.args.prm1, "123");
+                assert.equal(req.args.prm2, "123");
+                res.end();
+            });
+
+            request(app)
+                .get('/blog')
+                .query({prm1: '123', prm2: "123"})
+                .expect(200, '', done);
         });
 
         it('should run onvalidate', function (done) {
