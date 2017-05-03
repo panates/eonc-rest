@@ -118,6 +118,20 @@ describe('SchemaItem', function () {
             done();
         });
 
+        it('should define sub items with a valid string only', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name", {
+                    type: "object",
+                    items: "a:long; b+:string"
+                });
+            } catch (e) {
+                ok = true
+            }
+            assert.ok(ok);
+            done();
+        });
+
         it('should not use () for unsupported types', function (done) {
             let ok;
             try {
@@ -266,6 +280,22 @@ describe('SchemaItem', function () {
             assert.ok(item.type === "long"
                 && item.minValue === 1
                 && item.maxValue === 5);
+            item = new SchemaItem("name", {
+                type: "number",
+                minValue: 1.5,
+                maxValue: 5.5,
+            });
+            assert.ok(item.type === "number"
+                && item.minValue === 1.5
+                && item.maxValue === 5.5);
+            item = new SchemaItem("name", {
+                type: "date",
+                minValue: new Date(0),
+                maxValue: new Date(1),
+            });
+            assert.ok(item.type === "date"
+                && item.minValue.getTime() === 0
+                && item.maxValue.getTime() === 1);
             done();
         });
 
@@ -447,7 +477,7 @@ describe('SchemaItem', function () {
 
         it('should deserialize "date" | 2017-01-25T10:30:45.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100+01:00"), new Date(Date.UTC(2017, 0, 25, 9, 30, 45, 100)));
+            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100-01:00"), new Date(Date.UTC(2017, 0, 25, 11, 30, 45, 100)));
             done();
         });
 
@@ -592,6 +622,18 @@ describe('SchemaItem', function () {
             done();
         });
 
+        it('should validate optional flag', function (done) {
+            let ok;
+            item = new SchemaItem("name", "string");
+            try {
+                item.deserialize("");
+            } catch (e) {
+                ok = true
+            }
+            assert.ok(ok);
+            done();
+        });
+
         it('should validate array size', function (done) {
             let ok = 0;
             item = new SchemaItem("name", "long[2-3]");
@@ -614,10 +656,14 @@ describe('SchemaItem', function () {
             item = new SchemaItem("name", "long(2-3)");
             try {
                 item.deserialize("1");
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             try {
                 item.deserialize("5");
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             assert.ok(ok === 2);
             done();
         });
@@ -627,10 +673,14 @@ describe('SchemaItem', function () {
             item = new SchemaItem("name", "string(2-3)");
             try {
                 item.deserialize("a");
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             try {
                 item.deserialize("abcde");
-            } catch (e) {ok++}
+            } catch (e) {
+                ok++
+            }
             assert.ok(ok === 2);
             done();
         });

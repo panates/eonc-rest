@@ -63,11 +63,15 @@ describe('Schema', function () {
         let ok = 0;
         try {
             schema1.define("prm1", "string");
-        } catch (e) {ok++}
+        } catch (e) {
+            ok++
+        }
         try {
             schema3.define("prm1", "string");
             schema3.define("prm1", "string");
-        } catch (e) {ok++}
+        } catch (e) {
+            ok++
+        }
         assert.ok(ok === 2);
         done();
     });
@@ -109,6 +113,28 @@ describe('Schema', function () {
         done();
     });
 
+    it('should not get schema with empty argument', function (done) {
+        let ok;
+        try {
+            rest.Schema.get();
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
+
+    it('should not get schema with invalid argument', function (done) {
+        let ok;
+        try {
+            rest.Schema.get("ns : aaa");
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
+
     it('should deserialize', function (done) {
         assert.equal(schema1.deserialize("prm1", "12345"), "12345");
         done();
@@ -140,16 +166,21 @@ describe('Schema', function () {
 
             ep.all({
                 prm1: "string",
-                prm2: "ns1:prm1"
+                prm2: "ns1:prm1",
+                prm3: {
+                    type: "prm1",
+                    ns: "ns1"
+                }
             }, function (req, res) {
                 assert.equal(req.args.prm1, "123");
                 assert.equal(req.args.prm2, "123");
+                assert.equal(req.args.prm3, "abc");
                 res.end();
             });
 
             request(app)
                 .get('/blog')
-                .query({prm1: '123', prm2: "123"})
+                .query({prm1: '123', prm2: "123", prm3: "abc"})
                 .expect(200, '', done);
         });
 
