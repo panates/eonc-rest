@@ -162,7 +162,7 @@ describe('Schema', function () {
             app.use('/blog', ep);
         });
 
-        it('should deserialize query params to request.args', function (done) {
+        it('should deserialize query params to request.params', function (done) {
 
             ep.all({
                 prm1: "string",
@@ -172,9 +172,9 @@ describe('Schema', function () {
                     ns: "ns1"
                 }
             }, function (req, res) {
-                assert.equal(req.args.prm1, "123");
-                assert.equal(req.args.prm2, "123");
-                assert.equal(req.args.prm3, "abc");
+                assert.equal(req.params.prm1, "123");
+                assert.equal(req.params.prm2, "123");
+                assert.equal(req.params.prm3, "abc");
                 res.end();
             });
 
@@ -194,7 +194,7 @@ describe('Schema', function () {
                     }
                 }
             }, function (req, res) {
-                assert.equal(req.args.prm1, "123validated");
+                assert.equal(req.params.prm1, "123validated");
                 res.end();
             });
 

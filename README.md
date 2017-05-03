@@ -52,11 +52,11 @@ ep.GET({
         }
     },
     function (req, res) {
-        res.end(JSON.stringify(req.args));
+        res.end(JSON.stringify(req.params));
     });
 
 ep.PUT("id:long; name:string(3-15); date:date?", function (req, res) {
-    res.end(JSON.stringify(req.args));
+    res.end(JSON.stringify(req.params));
 });
 
 
@@ -91,10 +91,10 @@ var ep = rest.endpoint();
 
 // Endpoint will handle GET, PUT and DELETE methods
 ep.GET("id:long", function (req, res) {
-    res.end("Your id is " + req.args.id);
+    res.end("Your id is " + req.params.id);
 });
 ep.PUT("id:long; name:string(3-15)", function (req, res) {
-    res.end("Your name updated with " + req.args.name);
+    res.end("Your name updated with " + req.params.name);
 });
 ep.DELETE("id:long", function (req, res) {
     res.end("Your id is delete");

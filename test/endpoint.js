@@ -176,7 +176,7 @@ describe('app.use(endpoint)', function () {
         it('should handle string type definitions', function (done) {
 
             ep.GET("prm1:long; prm2:string", function (req, res) {
-                res.end(req.args.prm1 + req.args.prm2);
+                res.end(req.params.prm1 + req.params.prm2);
             });
 
             app.use('/blog', ep);
@@ -196,7 +196,7 @@ describe('app.use(endpoint)', function () {
                     type: "string"
                 }
             }, function (req, res) {
-                res.end(req.args.prm1 + req.args.prm2);
+                res.end(req.params.prm1 + req.params.prm2);
             });
 
             app.use('/blog', ep);
