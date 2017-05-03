@@ -477,6 +477,7 @@ describe('SchemaItem', function () {
 
         it('should deserialize "date" | 2017-01-25T10:30:45.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
+            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100+01:00"), new Date(Date.UTC(2017, 0, 25, 9, 30, 45, 100)));
             assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100-01:00"), new Date(Date.UTC(2017, 0, 25, 11, 30, 45, 100)));
             done();
         });
@@ -508,6 +509,7 @@ describe('SchemaItem', function () {
         it('should deserialize "date" | 25.12.2017 10:30:15.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
             assert.deepEqual(item.deserialize("25.12.2017 10:30:15.100+01:00"), new Date(Date.UTC(2017, 11, 25, 9, 30, 15, 100)));
+            assert.deepEqual(item.deserialize("25.12.2017 10:30:15.100-01:00"), new Date(Date.UTC(2017, 11, 25, 11, 30, 15, 100)));
             done();
         });
 
@@ -532,6 +534,7 @@ describe('SchemaItem', function () {
         it('should deserialize "date" | 12/25/2017 10:30:15.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
             assert.deepEqual(item.deserialize("12/25/2017 10:30:15.100+01:00"), new Date(Date.UTC(2017, 11, 25, 9, 30, 15, 100)));
+            assert.deepEqual(item.deserialize("12/25/2017 10:30:15.100-01:00"), new Date(Date.UTC(2017, 11, 25, 11, 30, 15, 100)));
             done();
         });
 

@@ -15,6 +15,17 @@ describe('app.use(middleware)', function(){
         app = rest.server();
     });
 
+    it('should mount to root as default', function (done) {
+        app.use(function (req, res) {
+            res.end(req.url);
+        });
+
+        request(app)
+            .get('/blog')
+            .expect(200, '/blog', done);
+    });
+
+
     it('should match all paths with "/"', function (done) {
         app.use('/', function (req, res) {
             res.end(req.url);
