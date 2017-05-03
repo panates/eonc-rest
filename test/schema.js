@@ -12,41 +12,75 @@ describe('Schema', function () {
     let schema1 = rest.schema("ns1:http://any1.test.url");
     let schema2 = rest.schema("ns2:http://any2.test.url");
 
-    describe('Define type from string', function () {
+    it('should not define an ns second time', function (done) {
+        let ok;
+        try {
+            let schema3 = rest.schema("ns2:http://any3.test.url");
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
 
-        it('should define internal types', function (done) {
+    it('should get a type with static function Schema.get("ns:type")', function (done) {
+        schema1.define("prm100", "string");
+        assert.ok(rest.Schema.get("ns1:prm100").type === "string");
+        done();
+    });
+
+    it('should not define an url second time', function (done) {
+        let ok;
+        try {
+            let schema3 = rest.schema("ns3:http://any2.test.url");
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
+
+    it('should define internal types', function (done) {
+        schema1.define("prm1", "string");
+        assert.equal(schema1.get("prm1").type, "string");
+        done();
+    });
+
+    it('should not define a type second time', function (done) {
+        let ok;
+        try {
             schema1.define("prm1", "string");
-            assert.equal(schema1.get("prm1").type, "string");
-            done();
-        });
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
+    });
 
-        it('should not define a type second time', function (done) {
-            let ok;
-            try {
-                schema1.define("prm1", "string");
-            } catch (e) {
-                ok = true;
-            }
-            assert.ok(ok);
-            done();
-        });
+    it('should define external types', function (done) {
+        schema2.define("prm1", "ns1:prm1");
+        assert.equal(schema2.get("prm1").type, "prm1");
+        done();
+    });
 
-        it('should define external types', function (done) {
-            schema2.define("prm1", "ns1:prm1");
-            assert.equal(schema2.get("prm1").type, "prm1");
-            done();
+    it('should define external types in sub items', function (done) {
+        schema2.define("prm2", {
+            type: "object",
+            items: {a: "ns1:prm1"}
         });
+        assert.equal(schema2.get("prm2").items.a.type, "prm1");
+        done();
+    });
 
-        it('should define unknown external types', function (done) {
-            let ok;
-            try {
-                schema2.define("prm1", "ns1:unknown");
-            } catch (e) {
-                ok = true;
-            }
-            assert.ok(ok);
-            done();
-        });
+    it('should define unknown external types', function (done) {
+        let ok;
+        try {
+            schema2.define("prm1", "ns1:unknown");
+        } catch (e) {
+            ok = true;
+        }
+        assert.ok(ok);
+        done();
     });
 
     describe('Schema in action', function () {

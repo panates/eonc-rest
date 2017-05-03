@@ -35,7 +35,7 @@ describe('SchemaItem', function () {
         it('should not create with invalid string definition', function (done) {
             let ok;
             try {
-                item = new SchemaItem("", "string+@");
+                item = new SchemaItem("a", "string+@");
             } catch (e) {
                 ok = true;
             }
@@ -109,6 +109,49 @@ describe('SchemaItem', function () {
             done();
         });
 
+        it('should not use () for unsupported types', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name", "boolean(1-5)");
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should use minSize and maxSize for "string" only', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name",
+                    {
+                        type: "long",
+                        minSize: 1,
+                        maxSize: 5
+                    });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should use minValue and maxValue for "number|double|integer|long|date" only', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name",
+                    {
+                        type: "string",
+                        minValue: 1,
+                        maxValue: 5
+                    });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
     });
 
     describe('Define type from object', function () {
@@ -149,6 +192,33 @@ describe('SchemaItem', function () {
                     type: "string",
                     minSize: 5,
                     maxSize: 1,
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should define "minValue" and "maxValue"', function (done) {
+            item = new SchemaItem("name", {
+                type: "long",
+                minValue: 1,
+                maxValue: 5,
+            });
+            assert.ok(item.type === "long"
+                && item.minValue === 1
+                && item.maxValue === 5);
+            done();
+        });
+
+        it('should check "minValue" < "maxValue"', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name", {
+                    type: "long",
+                    minValue: 5,
+                    maxValue: 1,
                 });
             } catch (e) {
                 ok = true;
@@ -215,6 +285,20 @@ describe('SchemaItem', function () {
             done();
         });
 
+        it('should check "pattern" is valid', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name", {
+                    type: "long",
+                    pattern: /+/
+                });
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
 
     });
 
@@ -264,97 +348,118 @@ describe('SchemaItem', function () {
 
         it('should deserialize "date" | 20170125', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("20170125"), new Date(2017,0,25, 0,0,0,0));
+            assert.deepEqual(item.deserialize("20170125"), new Date(2017, 0, 25, 0, 0, 0, 0));
             done();
         });
 
         it('should deserialize "date" | 201701251030', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("201701251030"), new Date(2017,0,25, 10,30,0,0));
+            assert.deepEqual(item.deserialize("201701251030"), new Date(2017, 0, 25, 10, 30, 0, 0));
             done();
         });
 
         it('should deserialize "date" | 20170125103045', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("20170125103045"), new Date(2017,0,25, 10,30,45,0));
+            assert.deepEqual(item.deserialize("20170125103045"), new Date(2017, 0, 25, 10, 30, 45, 0));
             done();
         });
 
         it('should deserialize "date" | 20170125103045100', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("20170125103045100"), new Date(2017,0,25, 10,30,45,100));
+            assert.deepEqual(item.deserialize("20170125103045100"), new Date(2017, 0, 25, 10, 30, 45, 100));
             done();
         });
 
         it('should deserialize "date" | 2017-01-25 10:30:45.100', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("2017-01-25 10:30:45.100"), new Date(2017,0,25, 10,30,45,100));
+            assert.deepEqual(item.deserialize("2017-01-25 10:30:45.100"), new Date(2017, 0, 25, 10, 30, 45, 100));
             done();
         });
 
         it('should deserialize "date" | 2017/01/25 10:30:45.100', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("2017-01-25 10:30:45.100"), new Date(2017,0,25, 10,30,45,100));
+            assert.deepEqual(item.deserialize("2017-01-25 10:30:45.100"), new Date(2017, 0, 25, 10, 30, 45, 100));
             done();
         });
 
         it('should deserialize "date" | 2017-01-25T10:30:45.100Z', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100Z"), new Date(Date.UTC(2017,0,25, 10,30,45,100)));
+            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100Z"), new Date(Date.UTC(2017, 0, 25, 10, 30, 45, 100)));
             done();
         });
 
         it('should deserialize "date" | 2017-01-25T10:30:45.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100+01:00"), new Date(Date.UTC(2017,0,25, 9,30,45,100)));
+            assert.deepEqual(item.deserialize("2017-01-25T10:30:45.100+01:00"), new Date(Date.UTC(2017, 0, 25, 9, 30, 45, 100)));
             done();
         });
 
         it('should deserialize "date" | 2017-01-25T10:30+01:00', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("2017-01-25T10:30+01:00"), new Date(Date.UTC(2017,0,25, 9,30,0,0)));
+            assert.deepEqual(item.deserialize("2017-01-25T10:30+01:00"), new Date(Date.UTC(2017, 0, 25, 9, 30, 0, 0)));
             done();
         });
 
         it('should deserialize "date" | 25.12.2017', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("25.12.2017"), new Date(2017,11,25, 0,0,0,0));
+            assert.deepEqual(item.deserialize("25.12.2017"), new Date(2017, 11, 25, 0, 0, 0, 0));
             done();
         });
 
         it('should deserialize "date" | 25.12.2017 10:30', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("25.12.2017 10:30"), new Date(2017,11,25, 10,30,0,0));
+            assert.deepEqual(item.deserialize("25.12.2017 10:30"), new Date(2017, 11, 25, 10, 30, 0, 0));
+            done();
+        });
+
+        it('should deserialize "date" | 25.12.2017 10:30:15.100Z', function (done) {
+            item = new SchemaItem("name", "date");
+            assert.deepEqual(item.deserialize("25.12.2017 10:30:15.100Z"), new Date(Date.UTC(2017, 11, 25, 10, 30, 15, 100)));
             done();
         });
 
         it('should deserialize "date" | 25.12.2017 10:30:15.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("25.12.2017 10:30:15.100+01:00"), new Date(Date.UTC(2017,11,25, 9,30,15,100)));
+            assert.deepEqual(item.deserialize("25.12.2017 10:30:15.100+01:00"), new Date(Date.UTC(2017, 11, 25, 9, 30, 15, 100)));
             done();
         });
 
         it('should deserialize "date" | 12/25/2017', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("12/25/2017"), new Date(2017,11,25, 0,0,0,0));
+            assert.deepEqual(item.deserialize("12/25/2017"), new Date(2017, 11, 25, 0, 0, 0, 0));
             done();
         });
 
         it('should deserialize "date" | 12/25/2017 10:30', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("12/25/2017 10:30"), new Date(2017,11,25, 10,30,0,0));
+            assert.deepEqual(item.deserialize("12/25/2017 10:30"), new Date(2017, 11, 25, 10, 30, 0, 0));
+            done();
+        });
+
+        it('should deserialize "date" | 12/25/2017 10:30:15.100Z', function (done) {
+            item = new SchemaItem("name", "date");
+            assert.deepEqual(item.deserialize("12/25/2017 10:30:15.100Z"), new Date(Date.UTC(2017, 11, 25, 10, 30, 15, 100)));
             done();
         });
 
         it('should deserialize "date" | 12/25/2017 10:30:15.100+01:00', function (done) {
             item = new SchemaItem("name", "date");
-            assert.deepEqual(item.deserialize("12/25/2017 10:30:15.100+01:00"), new Date(Date.UTC(2017,11,25, 9,30,15,100)));
+            assert.deepEqual(item.deserialize("12/25/2017 10:30:15.100+01:00"), new Date(Date.UTC(2017, 11, 25, 9, 30, 15, 100)));
+            done();
+        });
+
+        it('should deserialize "array"', function (done) {
+            item = new SchemaItem("name", "long[]");
+            let d = new Date();
+            assert.deepEqual(item.deserialize("123"), [123]);
+            assert.deepEqual(item.deserialize(["123"]), [123]);
+            assert.deepEqual(item.deserialize(["1", "2", "3"]), [1, 2, 3]);
             done();
         });
 
         it('should deserialize explicit "object" ', function (done) {
             item = new SchemaItem("name", "object");
-            assert.deepEqual(item.deserialize("{a:1,b:2,c:'c'}"), {a:1,b:2,c:'c'});
+            assert.deepEqual(item.deserialize("{a:1,b:2,c:'c'}"), {a: 1, b: 2, c: 'c'});
             done();
         });
 
@@ -367,7 +472,7 @@ describe('SchemaItem', function () {
                     c: "string"
                 }
             });
-            assert.deepEqual(item.deserialize("{a:1,b:2,c:'c',d:5}"), {a:1,b:2,c:'c'});
+            assert.deepEqual(item.deserialize("{a:1,b:2,c:'c',d:5}"), {a: 1, b: 2, c: 'c'});
             done();
         });
 
