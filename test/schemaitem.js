@@ -152,6 +152,17 @@ describe('SchemaItem', function () {
             done();
         });
 
+        it('should check minValue and maxValue is integer number', function (done) {
+            let ok;
+            try {
+                item = new SchemaItem("name", {type: "string", minValue: "abc"});
+            } catch (e) {
+                ok = true;
+            }
+            assert.ok(ok);
+            done();
+        });
+
     });
 
     describe('Define type from object', function () {
@@ -290,7 +301,7 @@ describe('SchemaItem', function () {
             try {
                 item = new SchemaItem("name", {
                     type: "long",
-                    pattern: /+/
+                    pattern: "+"
                 });
             } catch (e) {
                 ok = true;
@@ -498,6 +509,47 @@ describe('SchemaItem', function () {
                 ok = true
             }
             assert.ok(ok);
+            done();
+        });
+
+        it('should validate "date" format', function (done) {
+            let ok;
+            item = new SchemaItem("name", "date");
+            try {
+                item.deserialize("12345");
+            } catch (e) {
+                ok = true
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should validate pattern', function (done) {
+            let ok;
+            item = new SchemaItem("name", "string"+/\d+/);
+            try {
+                item.deserialize("abcd");
+            } catch (e) {
+                ok = true
+            }
+            assert.ok(ok);
+            done();
+        });
+
+        it('should validate array size', function (done) {
+            let ok = 0;
+            item = new SchemaItem("name", "long[2-3]");
+            try {
+                item.deserialize(["1", "2", "3", "4"]);
+            } catch (e) {
+                ok++;
+            }
+            try {
+                item.deserialize(["1"]);
+            } catch (e) {
+                ok++;
+            }
+            assert.ok(ok === 2);
             done();
         });
 
