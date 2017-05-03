@@ -4,6 +4,7 @@
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Build Status][travis-image]][travis-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
+[![Join the chat at https://gitter.im/panates/eonc-rest](https://badges.gitter.im/panates/eonc-rest.svg)](https://gitter.im/panates/eonc-rest?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
   [EONC-Rest](https://github.com/panates/eonc-rest) is a fast Rest-Application framework for [NodeJS](http://nodejs.org), makes building rest applications easy.
 EONC-Rest framework supports  endpoints (known as api's), types, global schemas and [express](https://github.com/expressjs/express)/[connect](https://github.com/senchalabs/connect) middlewares.
