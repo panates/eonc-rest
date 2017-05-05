@@ -146,7 +146,7 @@ describe('app.use(middleware)', function(){
             .expect(200, '1,2', done);
     });
 
-    describe('with a connect app', function(){
+    describe('with a eonc app', function(){
         it('should mount', function(done){
             let blog = rest.server();
 

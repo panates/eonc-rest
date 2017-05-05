@@ -157,7 +157,7 @@ ep.GET(
         field3: "integer?[1-10]",         // Optional field can have integer array that have at least 1, max 10 items
         field4: "integer(1-100)",         // Field must have integer values between 1 and 100 
         field5: "integer?(1-100)[1-10]",  // Optional array field with value range checking   
-        field6: "string?(3-15)/\w+/",     // Optional string field with value pattern checking
+        field6: "string?(3-15)" + /\w+/,     // Optional string field with value pattern checking
     },
     handler);
 ```

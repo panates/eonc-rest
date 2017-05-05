@@ -210,8 +210,9 @@ describe('app.use(endpoint)', function () {
 
             let ok;
             try {
-                ep.GET("prm1:long; prm1:string", function (req, res) {});
-            } catch(e) {
+                ep.GET("prm1:long; prm1:string", function (req, res) {
+                });
+            } catch (e) {
                 ok = true;
             }
             assert.ok(ok);
@@ -222,9 +223,11 @@ describe('app.use(endpoint)', function () {
 
             let ok;
             try {
-                ep.GET("prm1:long; prm2:string", function (req, res) {});
-                ep.GET("prm1:long; prm2:string", function (req, res) {});
-            } catch(e) {
+                ep.GET("prm1:long; prm2:string", function (req, res) {
+                });
+                ep.GET("prm1:long; prm2:string", function (req, res) {
+                });
+            } catch (e) {
                 ok = true;
             }
             assert.ok(ok);
