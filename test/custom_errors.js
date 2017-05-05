@@ -7,14 +7,14 @@ const rest = require('..');
 const http = require('http');
 const request = require('supertest');
 
-describe('errors', function () {
+describe('Custom errors', function () {
 
     let app;
     let ep;
 
     beforeEach(function () {
         app = rest.server();
-        ep = rest.endpoint();
+        ep = new rest.Endpoint();
     });
 
     it('should handle ImplementationError', function (done) {

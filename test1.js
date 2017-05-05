@@ -1,36 +1,17 @@
 const rest = require('./');
 const http = require('http');
 
-let schema1 = rest.schema("ns1:http://any1.test.url");
-let schema2 = rest.schema();
-
-
-item = new rest.SchemaItem("name", {
-    type: "object",
-    items: "a:long; b+:string"
-});
-console.log(item.deserialize("{a:1, b:2}"));
-
 let app = rest.server();
-let ep = rest.endpoint();
+
+let ep = new rest.Endpoint();
 app.use('/blog', ep);
 
 
-ep.GET("prm1:long; prm2:string", function (req, res) {
+ep.all(function (req, res) {
+    throw new rest.InvalidRequestError();
 });
 
-ep.all({
-    prm1: {
-        type: "string",
-        onvalidate: function (name, val) {
-            return val + "validated";
-        }
-    }
-}, function (req, res) {
-    console.log(req.params.prm1);
-    //assert.equal(req.params.prm1, "123validated");
-    res.end();
-});
+app.use('/blog', ep);
 
 
 //create node.js http server and listen on port

@@ -13,7 +13,7 @@ let blogs = {
 };
 
 // create the endpoint (api)
-let ep = rest.endpoint();
+let ep = new rest.Endpoint();
 
 // Handle Http GET method
 ep.GET("id:long", function (req, res) {

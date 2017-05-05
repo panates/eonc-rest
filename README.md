@@ -162,6 +162,29 @@ ep.GET(
     handler);
 ```
 
+### Dynamic loading endpoints
+A local path can be mounted to serve as api root. Server make a lookup for endpoint js file relative to you service root and execute it on request.
+
+Let's say you have a local folder tree like this
+ ```
+ - apiroot
+  |- subdir
+    |- ep_api1.js
+    |- ep_api2.js
+ ```
+ ```js
+  app = rest.server();
+  app.mount('/myservice', {
+     localDir: './apiroot'
+     prefix: 'ep_'
+ })
+  app.listen(5000);
+ 
+ ```
+  
+When client requests http:/host:port/myservice/subdir/api1 server will execute ./apiroot//subdir/ep_api1.js file and call the handler of the endpoint. This is very useful when you have lots of apis in your application. 
+ 
+
 ### Use global schemas
 Global schemas can be used in an EONC-Rest application. This helps you define global types and use them in your endpoints. 
 
@@ -186,7 +209,6 @@ Once you created a schema object and define types in it, you can use that types 
 var ep = rest.endpoint();
 
 ep.GET("id:ns1:ID; name:ns1:Name; data:ns2:CustomType", handler);
-
 
 ```
 

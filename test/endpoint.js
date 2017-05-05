@@ -7,7 +7,7 @@ const rest = require('..');
 const http = require('http');
 const request = require('supertest');
 
-describe('app.use(endpoint)', function () {
+describe('Endpoint', function () {
 
     describe('Handle http methods', function () {
 
@@ -16,7 +16,7 @@ describe('app.use(endpoint)', function () {
 
         beforeEach(function () {
             app = rest.server();
-            ep = rest.endpoint();
+            ep = new rest.Endpoint();
         });
 
         it('should handle all methods', function (done) {
@@ -170,7 +170,7 @@ describe('app.use(endpoint)', function () {
 
         beforeEach(function () {
             app = rest.server();
-            ep = rest.endpoint();
+            ep = new rest.Endpoint();
         });
 
         it('should handle string type definitions', function (done) {

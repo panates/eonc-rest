@@ -18,6 +18,20 @@ describe('app.mount(path, cfg)', function () {
         app = rest.server();
     });
 
+    it('should construct DynamicRouter(string)', function (done) {
+
+        new rest.DynamicRouter('./path');
+        done();
+    });
+
+    it('should construct DynamicRouter(object)', function (done) {
+
+        new rest.DynamicRouter({
+            localDir: "./"
+        });
+        done();
+    });
+
     it('should mount to root as default', function (done) {
 
         app.mount({
@@ -26,10 +40,10 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/ep_blog?id=1')
-            .expect(200, done);
+            .expect(200, "OK", done);
     });
 
-    it('should match full path', function (done) {
+    it('should match absolute path', function (done) {
 
         app.mount('/service', {
             localDir: apiDir
@@ -37,7 +51,18 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/service/ep_blog?id=1')
-            .expect(200, done);
+            .expect(200, "OK", done);
+    });
+
+    it('should match relative path', function (done) {
+
+        app.mount('/service', {
+            localDir: '../../../test/apis'
+        });
+
+        request(app)
+            .get('/service/ep_blog?id=1')
+            .expect(200, "OK", done);
     });
 
     it('should match prefix', function (done) {
@@ -49,7 +74,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/blog?id=1')
-            .expect(200, done);
+            .expect(200, "OK", done);
     });
 
     it('should match suffix (.js)', function (done) {
@@ -75,7 +100,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/blog?id=1')
-            .expect(200, done);
+            .expect(200, "OK", done);
     });
 
     it('should call filter callback', function (done) {
@@ -89,7 +114,7 @@ describe('app.mount(path, cfg)', function () {
         });
         request(app)
             .get('/ep_blog?id=1')
-            .expect(200)
+            .expect(200, "OK")
             .end(function (err) {
                 assert.ok(!err && ok, "filter callback didn't called!");
                 done();
