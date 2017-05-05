@@ -21,7 +21,7 @@ app.mount({
         localDir: './apis',
         prefix: 'ep_', // Endpoint file name prefix is _ep
         suffix: '.js', // Endpoint file name suffix is .js  // This is default behavior
-        filter: function (filename) {
+        onmatch: function (filename) {
             // accept any file except ep_skipthis.js
             return (path.basename(filename) !== 'ep_skipthis.js');
         }

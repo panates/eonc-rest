@@ -38,7 +38,9 @@ describe('app.mount(path, cfg)', function () {
             localDir: "./",
             prefix: "prefix",
             suffix: "suffix",
-            filter: function () {
+            onmatch: function () {
+            },
+            onexecute: function () {
             }
         };
 
@@ -47,7 +49,8 @@ describe('app.mount(path, cfg)', function () {
         assert.equal(router.localDir,cfg.localDir);
         assert.equal(router.prefix, cfg.prefix);
         assert.equal(router.suffix, cfg.suffix);
-        assert.equal(router.filter, cfg.filter);
+        assert.equal(router.onmatch, cfg.onmatch);
+        assert.equal(router.onexecute, cfg.onexecute);
         done();
     });
 
@@ -109,11 +112,11 @@ describe('app.mount(path, cfg)', function () {
             .expect(200, 'blogjs', done);
     });
 
-    it('should call filter callback', function (done) {
+    it('should call onmatch callback', function (done) {
         let ok;
         app.mount('/', {
             localDir: apiDir,
-            filter: function () {
+            onmatch: function () {
                 ok = true;
                 return true;
             }
@@ -129,10 +132,34 @@ describe('app.mount(path, cfg)', function () {
             })
     });
 
-    it('should call filter callback only if it is function', function (done) {
+    it('should call onmatch callback only if it is function', function (done) {
         app.mount('/', {
             localDir: apiDir,
-            filter: "-"
+            onmatch: "-"
+        });
+        request(app)
+            .get('/ep_blog?id=1')
+            .expect(200, "blogjs", done);
+    });
+
+    it('should call onexecute callback', function (done) {
+        let ok;
+        app.mount('/', {
+            localDir: apiDir,
+            onexecute: function (filename, ep, req, res) {
+                res.end('ok');
+                return true;
+            }
+        });
+        request(app)
+            .get('/ep_blog?id=1')
+            .expect(200, "ok", done);
+    });
+
+    it('should call onexecute callback only if it is function', function (done) {
+        app.mount('/', {
+            localDir: apiDir,
+            onexecute: "-"
         });
         request(app)
             .get('/ep_blog?id=1')
