@@ -20,15 +20,34 @@ describe('app.mount(path, cfg)', function () {
 
     it('should construct DynamicRouter(string)', function (done) {
 
-        new rest.DynamicRouter('./path');
+        rest.dynamicRouter('./path');
         done();
     });
 
     it('should construct DynamicRouter(object)', function (done) {
 
-        new rest.DynamicRouter({
+        rest.dynamicRouter({
             localDir: "./"
         });
+        done();
+    });
+
+    it('should configure', function (done) {
+
+        let cfg = {
+            localDir: "./",
+            prefix: "prefix",
+            suffix: "suffix",
+            filter: function () {
+            }
+        };
+
+        let router = rest.dynamicRouter('./dir');
+        router.configure(cfg);
+        assert.equal(router.localDir,cfg.localDir);
+        assert.equal(router.prefix, cfg.prefix);
+        assert.equal(router.suffix, cfg.suffix);
+        assert.equal(router.filter, cfg.filter);
         done();
     });
 
@@ -40,7 +59,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/ep_blog?id=1')
-            .expect(200, "OK", done);
+            .expect(200, "blogjs", done);
     });
 
     it('should match absolute path', function (done) {
@@ -51,7 +70,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/service/ep_blog?id=1')
-            .expect(200, "OK", done);
+            .expect(200, "blogjs", done);
     });
 
     it('should match relative path', function (done) {
@@ -62,7 +81,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/service/ep_blog?id=1')
-            .expect(200, "OK", done);
+            .expect(200, "blogjs", done);
     });
 
     it('should match prefix', function (done) {
@@ -74,7 +93,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/blog?id=1')
-            .expect(200, "OK", done);
+            .expect(200, "blogjs", done);
     });
 
     it('should match suffix (.js)', function (done) {
@@ -87,20 +106,7 @@ describe('app.mount(path, cfg)', function () {
 
         request(app)
             .get('/blog?id=1')
-            .expect(200, done);
-    });
-
-    it('should match suffix (undefined)', function (done) {
-
-        app.mount('/', {
-            localDir: apiDir,
-            prefix: 'ep_',
-            suffix: undefined
-        });
-
-        request(app)
-            .get('/blog?id=1')
-            .expect(200, "OK", done);
+            .expect(200, 'blogjs', done);
     });
 
     it('should call filter callback', function (done) {
@@ -114,14 +120,26 @@ describe('app.mount(path, cfg)', function () {
         });
         request(app)
             .get('/ep_blog?id=1')
-            .expect(200, "OK")
+            .expect(200, "blogjs")
             .end(function (err) {
-                assert.ok(!err && ok, "filter callback didn't called!");
+                if (err)
+                    console.log(err);
+                assert.ok(!err && ok);
                 done();
             })
     });
 
-    it('should call nex() when no file fount', function (done) {
+    it('should call filter callback only if it is function', function (done) {
+        app.mount('/', {
+            localDir: apiDir,
+            filter: "-"
+        });
+        request(app)
+            .get('/ep_blog?id=1')
+            .expect(200, "blogjs", done);
+    });
+
+    it('should call next() when no file fount', function (done) {
         app.mount('/', {
             localDir: apiDir
         });
@@ -139,4 +157,4 @@ describe('app.mount(path, cfg)', function () {
             .expect(400, done);
     });
 
-});
+})
