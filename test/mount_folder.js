@@ -89,7 +89,7 @@ describe('app.mount(path, cfg)', function () {
         });
         request(app)
             .get('/ep_blog?id=1')
-            .expect(200, done)
+            .expect(200)
             .end(function (err) {
                 assert.ok(!err && ok, "filter callback didn't called!");
                 done();
