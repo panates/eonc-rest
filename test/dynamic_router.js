@@ -35,7 +35,6 @@ describe('app.mount(path, cfg)', function () {
     it('should configure', function (done) {
 
         let cfg = {
-            localDir: "./",
             prefix: "prefix",
             suffix: "suffix",
             onmatch: function () {
@@ -44,9 +43,9 @@ describe('app.mount(path, cfg)', function () {
             }
         };
 
-        let router = rest.dynamicRouter('./dir');
+        let router = rest.dynamicRouter('./');
         router.configure(cfg);
-        assert.equal(router.localDir,cfg.localDir);
+        assert.equal(router.localDir, './');
         assert.equal(router.prefix, cfg.prefix);
         assert.equal(router.suffix, cfg.suffix);
         assert.equal(router.onmatch, cfg.onmatch);
@@ -154,6 +153,18 @@ describe('app.mount(path, cfg)', function () {
         request(app)
             .get('/ep_blog?id=1')
             .expect(200, "ok", done);
+    });
+
+    it('should skip file if onmatch returns false', function (done) {
+        app.mount('/', {
+            localDir: apiDir,
+            onmatch: function () {
+                return false;
+            }
+        });
+        request(app)
+            .get('/ep_blog?id=1')
+            .expect(404, done);
     });
 
     it('should call onexecute callback only if it is function', function (done) {
