@@ -163,7 +163,7 @@ ep.GET(
 ```
 
 ### Dynamic loading endpoints
-A local path can be mounted to serve as api root. Server make a lookup for endpoint js file relative to you service root and execute it on request.
+A local path can be mounted to serve as api root. Server make a lookup for endpoint file relative to your service root and execute it on request.
 
 Let's say you have a local folder tree like this
  ```
