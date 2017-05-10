@@ -37,7 +37,7 @@
   },
   "files": [
     "LICENSE",
-    "READMI.md",
+    "README.md",
     "index.js",
     "lib/"
   ],

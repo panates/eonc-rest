@@ -1,5 +1,5 @@
 /*!
- * eonc
+ * eonc-rest
  * Copyright(c) 2017 Panates Ltd.
  * MIT Licensed
  */
