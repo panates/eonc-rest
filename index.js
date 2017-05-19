@@ -13,12 +13,12 @@ const errors = require('./lib/errors');
 const DynamicRouter = require('./lib/dynamicrouter');
 
 exports = module.exports = {
-    server: server,
-    Endpoint: Endpoint,
+    server,
+    Endpoint,
     endpoint: function () {
         return new Endpoint();
     },
-    DynamicRouter: DynamicRouter,
+    DynamicRouter,
     dynamicRouter: function (cfg) {
         return new DynamicRouter(cfg);
     },
@@ -27,7 +27,7 @@ exports = module.exports = {
         return new schema.Schema(namespace);
     },
     SchemaItem: schema.SchemaItem,
-    errors: errors,
+    errors,
     HttpError: errors.HttpError,
     InvalidRequestError: errors.InvalidRequestError,
     ImplementationError: errors.ImplementationError
