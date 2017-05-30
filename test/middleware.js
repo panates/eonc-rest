@@ -12,7 +12,7 @@ describe('app', function(){
     let app;
 
     beforeEach(function(){
-        app = rest.server();
+        app = rest.handler();
     });
 
     it('should inherit from event emitter', function(done){
@@ -21,7 +21,7 @@ describe('app', function(){
     });
 
     it('should work in http.createServer', function(done){
-        let app = rest.server();
+        let app = rest.handler();
 
         app.use(function (req, res) {
             res.end('hello, world!');
@@ -35,7 +35,7 @@ describe('app', function(){
     });
 
     it('should be a callable function', function(done){
-        let app = rest.server();
+        let app = rest.handler();
 
         app.use(function (req, res) {
             res.end('hello, world!');
@@ -54,7 +54,7 @@ describe('app', function(){
     });
 
     it('should invoke callback if request not handled', function(done){
-        let app = rest.server();
+        let app = rest.handler();
 
         app.use('/foo', function (req, res) {
             res.end('hello, world!');
@@ -75,7 +75,7 @@ describe('app', function(){
     });
 
     it('should invoke callback on error', function(done){
-        let app = rest.server();
+        let app = rest.handler();
 
         app.use(function (req, res) {
             throw new Error('boom!');
@@ -97,7 +97,7 @@ describe('app', function(){
 
     it('should work as middleware', function(done){
         // custom server handler array
-        let handlers = [rest.server(), function(req, res, next){
+        let handlers = [rest.handler(), function(req, res, next){
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end('Ok');
         }];
@@ -139,7 +139,7 @@ describe('app', function(){
         });
 
         it('shoud not fire after headers sent', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use(function(req, res, next){
                 res.write('body');
@@ -153,7 +153,7 @@ describe('app', function(){
         });
 
         it('shoud have no body for HEAD', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             request(app)
                 .head('/')
@@ -163,7 +163,7 @@ describe('app', function(){
 
     describe('error handler', function(){
         it('should have escaped response body', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use(function(req, res, next){
                 throw new Error('<script>alert()</script>');
@@ -175,7 +175,7 @@ describe('app', function(){
         });
 
         it('should use custom error code', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use(function(req, res, next){
                 let err = new Error('ack!');
@@ -189,7 +189,7 @@ describe('app', function(){
         });
 
         it('should keep error statusCode', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use(function(req, res, next){
                 res.statusCode = 503;
@@ -202,7 +202,7 @@ describe('app', function(){
         });
 
         it('shoud not fire after headers sent', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use(function(req, res, next){
                 res.write('body');
@@ -218,7 +218,7 @@ describe('app', function(){
         });
 
         it('shoud have no body for HEAD', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use(function(req, res, next){
                 throw new Error('ack!');

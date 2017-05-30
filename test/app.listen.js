@@ -8,7 +8,7 @@ const request = require('supertest');
 
 describe('app.listen()', function(){
     it('should wrap in an http.Server', function(done){
-        let app = rest.server();
+        let app = rest.handler();
 
         app.use(function(req, res){
             res.end();

@@ -8,6 +8,7 @@
   ],
   "license": "MIT",
   "repository": "panates/eonc-rest",
+  "main": "src/index.js",
   "keywords": [
     "eonc",
     "rest",
@@ -22,14 +23,14 @@
     "express"
   ],
   "dependencies": {
-    "debug": "^2.6.6",
-    "finalhandler": "^1.0.1",
+    "debug": "^2.6.8",
+    "finalhandler": "^1.0.3",
     "jsonic": "^0.3.0",
     "parseurl": "^1.3.1"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
+    "mocha": "^3.4.1",
     "supertest": "^3.0.0"
   },
   "engines": {

@@ -11,7 +11,7 @@ describe('app.use()', function(){
     let app;
 
     beforeEach(function(){
-        app = rest.server();
+        app = rest.handler();
     });
 
     it('should not obscure FQDNs', function(done){

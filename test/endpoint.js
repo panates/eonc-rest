@@ -15,7 +15,7 @@ describe('Endpoint', function () {
         let ep;
 
         beforeEach(function () {
-            app = rest.server();
+            app = rest.handler();
             ep = new rest.Endpoint();
         });
 
@@ -169,7 +169,7 @@ describe('Endpoint', function () {
         let ep;
 
         beforeEach(function () {
-            app = rest.server();
+            app = rest.handler();
             ep = new rest.Endpoint();
         });
 

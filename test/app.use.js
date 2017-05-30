@@ -12,7 +12,7 @@ describe('app.use(middleware)', function(){
     let app;
 
     beforeEach(function(){
-        app = rest.server();
+        app = rest.handler();
     });
 
     it('should mount to root as default', function (done) {
@@ -148,7 +148,7 @@ describe('app.use(middleware)', function(){
 
     describe('with a eonc app', function(){
         it('should mount', function(done){
-            let blog = rest.server();
+            let blog = rest.handler();
 
             blog.use(function(req, res){
                 assert.equal(req.url, '/');
@@ -163,7 +163,7 @@ describe('app.use(middleware)', function(){
         });
 
         it('should retain req.originalUrl', function(done){
-            let app = rest.server();
+            let app = rest.handler();
 
             app.use('/blog', function(req, res){
                 res.end(req.originalUrl);
@@ -185,7 +185,7 @@ describe('app.use(middleware)', function(){
         });
 
         it('should strip trailing slash', function(done){
-            let blog = rest.server();
+            let blog = rest.handler();
 
             blog.use(function(req, res){
                 assert.equal(req.url, '/');
@@ -200,8 +200,8 @@ describe('app.use(middleware)', function(){
         });
 
         it('should set .route', function(){
-            let blog = rest.server();
-            let admin = rest.server();
+            let blog = rest.handler();
+            let admin = rest.handler();
             app.use('/blog', blog);
             blog.use('/admin', admin);
             assert.equal(app.route, '/');

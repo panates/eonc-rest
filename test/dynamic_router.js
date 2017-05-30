@@ -15,7 +15,7 @@ describe('app.mount(path, cfg)', function () {
     let app;
 
     beforeEach(function () {
-        app = rest.server();
+        app = rest.handler();
     });
 
     it('should construct DynamicRouter(string)', function (done) {

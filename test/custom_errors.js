@@ -13,7 +13,7 @@ describe('Custom errors', function () {
     let ep;
 
     beforeEach(function () {
-        app = rest.server();
+        app = rest.handler();
         ep = new rest.Endpoint();
     });
 

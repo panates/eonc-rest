@@ -16,7 +16,7 @@ EONC-Rest framework supports  endpoints (known as api's), types, global schemas 
 const rest = require('eonc-rest');
 const http = require('http');
 
-const app = rest.server();
+const app = rest.handler();
 
 // gzip/deflate outgoing responses
 const compression = require('compression');
@@ -82,7 +82,7 @@ $ npm install eonc-rest
 The main component is a rest server. This will route request to the middlewares and endpoints.
 
 ```js
-const app = rest.server();
+const app = rest.handler();
 ```
 ### Create endpoints
 
@@ -175,7 +175,7 @@ Let's say you have a local folder tree like this
     |- ep_api2.js
  ```
  ```js
-  app = rest.server();
+  app = rest.handler();
   app.mount('/myservice', {
      localDir: './apiroot'
      prefix: 'ep_'

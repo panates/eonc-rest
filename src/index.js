@@ -4,16 +4,14 @@
  * MIT Licensed
  */
 
-'use strict';
-
-const server = require('./lib/server');
-const Endpoint = require('./lib/endpoint');
-const schema = require('./lib/schema');
-const errors = require('./lib/errors');
-const DynamicRouter = require('./lib/dynamicrouter');
+const handler = require('./core');
+const Endpoint = require('./endpoint');
+const schema = require('./schema');
+const errors = require('./errors');
+const DynamicRouter = require('./dynamicrouter');
 
 exports = module.exports = {
-    server,
+    handler,
     Endpoint,
     endpoint: function () {
         return new Endpoint();

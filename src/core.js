@@ -4,31 +4,24 @@
  * MIT Licensed
  */
 
-/**
- * This module is maintained from 'connect' project - https://github.com/senchalabs/connect
+/*
+ * This file is maintained from 'connect' project - https://github.com/senchalabs/connect
  */
 
-/**
- * External module dependencies.
- */
-
-const EventEmitter = require('events').EventEmitter;
+/* External module dependencies. */
+const {EventEmitter} = require('events');
 const http = require('http');
 const path = require('path');
 const finalhandler = require('finalhandler');
 const parseUrl = require('parseurl');
-const debug = require('debug')('eonc:server');
+const debug = require('debug')('eonc:resthandler');
 
-/**
- * Internal module dependencies.
- */
-
+/* Internal module dependencies. */
 const Endpoint = require('./endpoint');
 const DynamicRouter = require('./dynamicrouter');
 
-/**
+/*
  * Module variables.
- * @private
  */
 
 const env = process.env.NODE_ENV || 'development';
@@ -41,23 +34,23 @@ const defer = typeof setImmediate === 'function'
     };
 
 /**
- * Create a new Server handler
+ * Create a new RestHandler
  *
  * @return {function}
  * @public
  */
 
-function createServer() {
+function createRestHandler() {
 
-    function Server(req, res, next) {
-        Server.handle(req, res, next);
+    function RestHandler(req, res, next) {
+        RestHandler.handle(req, res, next);
     }
 
-    Object.assign(Server, proto);
-    Object.assign(Server, EventEmitter.prototype);
-    Server.route = '/';
-    Server.stack = [];
-    return Server;
+    Object.assign(RestHandler, proto);
+    Object.assign(RestHandler, EventEmitter.prototype);
+    RestHandler.route = '/';
+    RestHandler.stack = [];
+    return RestHandler;
 }
 
 let proto = {
@@ -73,9 +66,9 @@ let proto = {
      * be invoked on _/admin_, and _/admin/settings_, however it would
      * not be invoked for _/_, or _/posts_.
      *
-     * @param {String|Function|Server} route, callback or server
-     * @param {Function|Server|Endpoint} fn callback, server, or endpoint
-     * @return {Server} for chaining
+     * @param {String|Function|RestHandler} route, callback or server
+     * @param {Function|RestHandler|Endpoint} fn callback, RestHandler, or EndPoint
+     * @return {RestHandler} for chaining
      * @public
      */
 
@@ -101,11 +94,11 @@ let proto = {
 
         // wrap sub-apps
         if (typeof lhandle === 'function' && typeof lhandle.handle === 'function') {
-            let server = lhandle;
-            server.route = lpath;
-            server.fullRoute = fullRoute;
+            let subHandler = lhandle;
+            subHandler.route = lpath;
+            subHandler.fullRoute = fullRoute;
             lhandle = function (req, res, next) {
-                server(req, res, next);
+                subHandler(req, res, next);
             };
         }
         // wrap Constructors
@@ -243,8 +236,8 @@ let proto = {
      *
      *      var app = connect();
      *
-     *      http.createServer(app).listen(80);
-     *      https.createServer(options, app).listen(443);
+     *      http.createRestHandler(app).listen(80);
+     *      https.createRestHandler(options, app).listen(443);
      *
      * @return {http.Server}
      * @public
@@ -329,4 +322,4 @@ function getProtohost(url) {
  * @public
  */
 
-exports = module.exports = createServer;
+exports = module.exports = createRestHandler;

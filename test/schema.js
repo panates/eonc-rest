@@ -157,7 +157,7 @@ describe('Schema', function () {
         let ep;
 
         beforeEach(function () {
-            app = rest.server();
+            app = rest.handler();
             ep = rest.endpoint();
             app.use('/blog', ep);
         });

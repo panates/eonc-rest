@@ -1,9 +1,9 @@
-const rest = require('../..'); // eonc-rest
+const rest = require('eonc-rest');
 const http = require('http');
 const path = require('path');
 
 // Create the server handler
-let app = rest.server();
+let app = rest.handler();
 
 
 // Create a global schema
