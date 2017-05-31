@@ -28,5 +28,5 @@ exports = module.exports = {
   errors,
   HttpError: errors.HttpError,
   InvalidRequestError: errors.InvalidRequestError,
-  ImplementationError: errors.ImplementationError,
+  ImplementationError: errors.ImplementationError
 };

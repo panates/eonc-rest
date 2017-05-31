@@ -22,7 +22,7 @@ exports = module.exports = {
       let a = namespace.match(/^(\w+\:(?!\/))(.+)$/);
       return {
         ns: a ? a[1].toLowerCase().substring(0, a[1].length - 1) : undefined,
-        namespace: a ? a[2] : namespace,
+        namespace: a ? a[2] : namespace
       };
     } else
       throw new Error('Namespace is required');
@@ -48,7 +48,7 @@ exports = module.exports = {
         } else {
           return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]),
               parseInt(m[4]) || 0, parseInt(m[5]) || 0, parseInt(m[6]) || 0,
-              parseInt(m[7]) || 0,
+              parseInt(m[7]) || 0
           );
         }
       }
@@ -68,7 +68,7 @@ exports = module.exports = {
         } else {
           return new Date(parseInt(m[3]), parseInt(m[1]) - 1, parseInt(m[2]),
               parseInt(m[4]) || 0, parseInt(m[5]) || 0, parseInt(m[6]) || 0,
-              parseInt(m[7]) || 0,
+              parseInt(m[7]) || 0
           );
         }
       }
@@ -88,11 +88,11 @@ exports = module.exports = {
         } else {
           return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]),
               parseInt(m[4]) || 0, parseInt(m[5]) || 0, parseInt(m[6]) || 0,
-              parseInt(m[7]) || 0,
+              parseInt(m[7]) || 0
           );
         }
       }
     }
-  },
+  }
 
 };

@@ -662,5 +662,5 @@ class SchemaItem {
 
 exports = module.exports = {
   Schema: Schema,
-  SchemaItem: SchemaItem,
+  SchemaItem: SchemaItem
 };

@@ -158,7 +158,7 @@ let proto = {
     // final function handler
     let done = out || finalhandler(req, res, {
           env: env,
-          onerror: logerror,
+          onerror: logerror
         });
 
     // store the original URL
@@ -247,7 +247,7 @@ let proto = {
   listen: function listen() {
     let server = http.createServer(this);
     return server.listen.apply(server, arguments);
-  },
+  }
 
 };
 

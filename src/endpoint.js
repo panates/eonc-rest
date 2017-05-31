@@ -122,14 +122,14 @@ class Endpoint {
     if (inputTypeDef) {
       this._types.define(method, {
         type: 'object',
-        items: inputTypeDef,
+        items: inputTypeDef
       });
     } else
       this._types.define(method, 'any');
 
     this._handlers[method] = {
       method: method,
-      handler: handler,
+      handler: handler
     };
     return this;
   }
