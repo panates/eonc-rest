@@ -6,11 +6,11 @@
 
 class CustomError extends Error {
 
-    constructor(message) {
-        super(message);
-        this.name = this.constructor.name;
-        Error.captureStackTrace(this, this.constructor);
-    }
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
 }
 
 class ImplementationError extends CustomError {
@@ -18,19 +18,18 @@ class ImplementationError extends CustomError {
 
 class HttpError extends CustomError {
 
-    constructor(code, message) {
-        super(message);
-        this.code = code;
-    }
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+  }
 }
 
 class InvalidRequestError extends HttpError {
 
-    constructor(message) {
-        super(400, message || "Bad request");
-    }
+  constructor(message) {
+    super(400, message || 'Bad request');
+  }
 }
-
 
 /**
  * Module exports.
