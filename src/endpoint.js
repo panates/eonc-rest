@@ -51,7 +51,7 @@ class Endpoint {
    * @return {Endpoint} for chaining
    * @public
    */
-  GET(inputTypeDef, handler) {
+  onGet(inputTypeDef, handler) {
     this.setHandler('GET', inputTypeDef, handler);
   }
 
@@ -63,7 +63,7 @@ class Endpoint {
    * @return {Endpoint} for chaining
    * @public
    */
-  PATCH(inputTypeDef, handler) {
+  onPatch(inputTypeDef, handler) {
     this.setHandler('PATCH', inputTypeDef, handler);
   }
 
@@ -75,7 +75,7 @@ class Endpoint {
    * @return {Endpoint} for chaining
    * @public
    */
-  POST(inputTypeDef, handler) {
+  onPost(inputTypeDef, handler) {
     this.setHandler('POST', inputTypeDef, handler);
   }
 
@@ -87,7 +87,7 @@ class Endpoint {
    * @return {Endpoint} for chaining
    * @public
    */
-  PUT(inputTypeDef, handler) {
+  onPut(inputTypeDef, handler) {
     this.setHandler('PUT', inputTypeDef, handler);
   }
 
@@ -99,7 +99,7 @@ class Endpoint {
    * @return {Endpoint} for chaining
    * @public
    */
-  DELETE(inputTypeDef, handler) {
+  onDelete(inputTypeDef, handler) {
     this.setHandler('DELETE', inputTypeDef, handler);
   }
 

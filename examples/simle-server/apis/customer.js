@@ -14,7 +14,7 @@ let customers = {
 let ep = rest.endpoint();
 
 // Handle Http GET method
-ep.GET("id:ns1:id", function (req, res) {
+ep.onGet("id:ns1:id", function (req, res) {
     let cust = customers[req.params.id];
     if (!cust)
         throw new rest.HttpError(400, "Record not found");
@@ -23,7 +23,7 @@ ep.GET("id:ns1:id", function (req, res) {
 });
 
 // Handle Http PUT method
-ep.PUT("id:ns1:id; name:ns1:name; phone:ns1:phonenumber; node:string", function (req, res) {
+ep.onPut("id:ns1:id; name:ns1:name; phone:ns1:phonenumber; node:string", function (req, res) {
     let cust = customers[req.params.id] || {};
     cust.name = req.params.name;
     cust.phone = req.params.phone;
@@ -33,7 +33,7 @@ ep.PUT("id:ns1:id; name:ns1:name; phone:ns1:phonenumber; node:string", function 
 });
 
 // Handle Http PATCH method
-ep.PATCH({
+ep.onPatch({
         id: "ns1:id",
         name: "ns1:name?",
         phone: "ns1:phonenumber?",
@@ -59,7 +59,7 @@ ep.PATCH({
     });
 
 // Handle Http DELETE method
-ep.DELETE("id:ns1:id", function (req, res) {
+ep.onDelete("id:ns1:id", function (req, res) {
     let cust = customers[req.params.id];
     if (!cust)
         throw new rest.HttpError(400, "Record not found");

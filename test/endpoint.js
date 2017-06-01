@@ -35,7 +35,7 @@ describe('Endpoint', function () {
 
         it('should handle DELETE method', function (done) {
 
-            ep.DELETE(function (req, res) {
+            ep.onDelete(function (req, res) {
                 assert.equal(req.url, '/');
                 res.end('deleted');
             });
@@ -49,7 +49,7 @@ describe('Endpoint', function () {
 
         it('should handle GET method', function (done) {
 
-            ep.GET(function (req, res) {
+            ep.onGet(function (req, res) {
                 assert.equal(req.url, '/');
                 res.end('blog');
             });
@@ -63,7 +63,7 @@ describe('Endpoint', function () {
 
         it('should handle POST method', function (done) {
 
-            ep.POST(function (req, res) {
+            ep.onPost(function (req, res) {
                 assert.equal(req.url, '/');
                 let body = '';
                 req.on('data', function (data) {
@@ -84,7 +84,7 @@ describe('Endpoint', function () {
 
         it('should handle PUT method', function (done) {
 
-            ep.PUT(function (req, res) {
+            ep.onPut(function (req, res) {
                 assert.equal(req.url, '/');
                 let body = '';
                 req.on('data', function (data) {
@@ -105,7 +105,7 @@ describe('Endpoint', function () {
 
         it('should handle PATCH method', function (done) {
 
-            ep.PATCH(function (req, res) {
+            ep.onPatch(function (req, res) {
                 assert.equal(req.url, '/');
                 let body = '';
                 req.on('data', function (data) {
@@ -126,7 +126,7 @@ describe('Endpoint', function () {
 
         it('should response error for not handled method', function (done) {
 
-            ep.GET(function (req, res) {
+            ep.onGet(function (req, res) {
             });
 
             app.use('/blog', ep);
@@ -138,7 +138,7 @@ describe('Endpoint', function () {
 
         it('should catch Http errors', function (done) {
 
-            ep.GET(function (req, res) {
+            ep.onGet(function (req, res) {
                 throw new rest.HttpError(400);
             });
 
@@ -151,7 +151,7 @@ describe('Endpoint', function () {
 
         it('should catch unknown errors', function (done) {
 
-            ep.GET(function (req, res) {
+            ep.onGet(function (req, res) {
                 throw "Error";
             });
 
@@ -175,7 +175,7 @@ describe('Endpoint', function () {
 
         it('should handle string type definitions', function (done) {
 
-            ep.GET("prm1:long; prm2:string", function (req, res) {
+            ep.onGet("prm1:long; prm2:string", function (req, res) {
                 res.end(req.params.prm1 + req.params.prm2);
             });
 
@@ -188,7 +188,7 @@ describe('Endpoint', function () {
 
         it('should handle object type definitions', function (done) {
 
-            ep.GET({
+            ep.onGet({
                 prm1: {
                     type: "long"
                 },
@@ -210,7 +210,7 @@ describe('Endpoint', function () {
 
             let ok;
             try {
-                ep.GET("prm1:long; prm1:string", function (req, res) {
+                ep.onGet("prm1:long; prm1:string", function (req, res) {
                 });
             } catch (e) {
                 ok = true;
@@ -223,9 +223,9 @@ describe('Endpoint', function () {
 
             let ok;
             try {
-                ep.GET("prm1:long; prm2:string", function (req, res) {
+                ep.onGet("prm1:long; prm2:string", function (req, res) {
                 });
-                ep.GET("prm1:long; prm2:string", function (req, res) {
+                ep.onGet("prm1:long; prm2:string", function (req, res) {
                 });
             } catch (e) {
                 ok = true;

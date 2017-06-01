@@ -30,7 +30,7 @@ app.use(cookieSession({
 
 let ep = rest.endpoint();
 
-ep.GET({
+ep.onGet({
         id: "long",
         name: {
             type: "string",
@@ -57,7 +57,7 @@ ep.GET({
         res.end(JSON.stringify(req.params));
     });
 
-ep.PUT("id:long; name:string(3-15); date:date?", function (req, res) {
+ep.onPut("id:long; name:string(3-15); date:date?", function (req, res) {
     res.end(JSON.stringify(req.params));
 });
 
@@ -92,13 +92,13 @@ Endpoints are the api's in your rest application. An endpoint can handle one, ma
 var ep = rest.endpoint();
 
 // Endpoint will handle GET, PUT and DELETE methods
-ep.GET("id:long", function (req, res) {
+ep.onGet("id:long", function (req, res) {
     res.end("Your id is " + req.params.id);
 });
-ep.PUT("id:long; name:string(3-15)", function (req, res) {
+ep.onPut("id:long; name:string(3-15)", function (req, res) {
     res.end("Your name updated with " + req.params.name);
 });
-ep.DELETE("id:long", function (req, res) {
+ep.onDelete("id:long", function (req, res) {
     res.end("Your id is delete");
 });
 app.use("/path/to/api1", ep);
@@ -116,7 +116,7 @@ Type checking and conversion is the powerful part of the EONC-Rest framework. It
 
 **1.Type definition objects**
 ```js
-ep.GET(
+ep.onGet(
     {
         field1: {
             type: "integer",
@@ -152,7 +152,7 @@ ep.GET(
 
 **2.Type definition strings**
 ```js
-ep.GET(
+ep.onGet(
     {
         field1: "integer",                // Integer field
         field2: "integer[]",              // Integer array field
@@ -210,7 +210,7 @@ Once you created a schema object and define types in it, you can use that types 
 ```js
 var ep = rest.endpoint();
 
-ep.GET("id:ns1:ID; name:ns1:Name; data:ns2:CustomType", handler);
+ep.onGet("id:ns1:ID; name:ns1:Name; data:ns2:CustomType", handler);
 
 ```
 

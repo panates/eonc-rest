@@ -4,7 +4,7 @@ const rest = require('../../');
 let ep = new rest.Endpoint();
 
 // Handle Http GET method
-ep.GET("id:long", function (req, res) {
+ep.onGet("id:long", function (req, res) {
     res.end("blogjs");
 });
 
