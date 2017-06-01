@@ -8,7 +8,6 @@
  * External module dependencies.
  */
 
-const debug = require('debug')('eonc:schema');
 const jsonic = require('jsonic');
 
 /**
@@ -32,12 +31,13 @@ const internalTypes = [
   'boolean',
   'date',
   'object'];
-const parseStringPattern = /^(\w+)?(?:\:)?(?:(\b\w+\b)(\??)(?:\((?:(\d+)(?:-(\d+))?)?\))?)(\[(?:(\d+)(?:-(\d+))?)?\])?(\/[^\/]*\/)?$/;
-const numberPattern = /^[\+\-]?\d+(\.)?\d*$/;
-const longPattern = /^[\+\-]?(\d+)$/;
 
-let gSchemas = {};
-let gSchemasNS = {};
+const parseStringPattern = /^(\w+)?(?::)?(?:(\b\w+\b)(\??)(?:\((?:(\d+)(?:-(\d+))?)?\))?)(\[(?:(\d+)(?:-(\d+))?)?])?(\/[^\/]*\/)?$/;
+const numberPattern = /^[+\-]?\d+(\.)?\d*$/;
+const longPattern = /^[+\-]?(\d+)$/;
+
+const gSchemas = {};
+const gSchemasNS = {};
 
 /**
  * SchemaError class
@@ -89,7 +89,7 @@ class DeserializeError extends errors.InvalidRequestError {
  */
 
 const parseDate = function(val, name) {
-  let d = helpers.parseDate(val);
+  const d = helpers.parseDate(val);
   if (!d)
     throw new DeserializeError(`Indalid date format for "${name}"`);
   return d;
@@ -112,7 +112,7 @@ class Schema {
 
   constructor(namespace) {
     if (namespace && typeof namespace === 'string') {
-      let a = helpers.parseNS(namespace);
+      const a = helpers.parseNS(namespace);
       this.ns = a.ns || 'ns' + (Object.keys(gSchemas).length + 1);
       this.namespace = a.namespace;
 
@@ -141,7 +141,7 @@ class Schema {
      *      maxOccurs: 10,   // Array may contain 10 items max
      *      pattern: /\w+/,  // input string must match given pattern
      *      optional: true,  // field is optional
-     *      onvalidate: function(name, val) {    // a callback function will be called after parse
+     *      onValidate: function(name, val) {    // a callback function will be called after parse
      *          if (val.indexOf('cat')>=0) throw new Error('Meow');
      *          return val + ' validated!';
      *      }
@@ -157,9 +157,8 @@ class Schema {
    */
 
   define(name, typeDef) {
-
-    let item = new SchemaItem(name, typeDef);
-    let nameKey = item.name.toLowerCase();
+    const item = new SchemaItem(name, typeDef);
+    const nameKey = item.name.toLowerCase();
     if (this._items[nameKey])
       throw new SchemaError(`${name} already defined${this.namespace ?
           ' in schema "' + this.namespace + '"' :
@@ -171,8 +170,8 @@ class Schema {
   /**
    * Gets the schema item
    *
-   * @param name Name of the type item
-   * @returns {*}
+   * @param {string} name - Name of the type item
+   * @return {*}
    * @public
    */
   get(name) {
@@ -184,11 +183,11 @@ class Schema {
    *
    * @param {String} typeName
    * @param {*} input
-   * @returns {*}
+   * @return {*}
    * @public
    */
   deserialize(typeName, input) {
-    let item = this.get(typeName);
+    const item = this.get(typeName);
     if (!item)
       throw new TypeNotFoundError(`Type not found "${typeName}"`);
     return item.deserialize(input);
@@ -196,15 +195,14 @@ class Schema {
 
   /**
    *
-   *
-   * @param namespace
+   * @param {string} namespace
    * @return {Schema}
    */
   static get(namespace) {
     let schema;
     if (namespace) {
       if (String(namespace).indexOf(':') >= 0) {
-        let m = namespace.match(/([\w]*)\:([\s\S]*)/);
+        const m = namespace.match(/([\w]*):([\s\S]*)/);
         if (m)
           return Schema.get(m[1]).get(m[2]);
       }
@@ -236,69 +234,78 @@ class SchemaItem {
    *
    * @param {String} name
    * @param {Object|String} typeDef
-   * @returns {Object}
+   * @param {string} typeDef.type
+   * @param {string} [typeDef.ns]
+   * @param {int|undefined} [typeDef.minOccurs]
+   * @param {int|undefined} [typeDef.maxOccurs]
+   * @param {int|undefined} [typeDef.minSize]
+   * @param {int|undefined} [typeDef.maxSize]
+   * @param {*} [typeDef.minValue]
+   * @param {*} [typeDef.maxValue]
+   * @param {string|RegExp|undefined} [typeDef.pattern]
+   * @param {boolean|undefined} [typeDef.optional]
+   * @param {Function|undefined} [typeDef.onValidate]
+   * @param {Object|undefined} [typeDef.items]
+   * @return {SchemaItem}
    * @private
    */
   _assign(name, typeDef) {
-
     if (!name || !typeDef)
       throw new SchemaError('"name" and "typeDef" parameters are required');
 
-    this.name = name;
+    const self = this;
+    self.name = name;
 
     if (typeof typeDef === 'string') {
-
-      this._parseString(typeDef);
-
+      self._parseString(typeDef);
     } else {
-
-      this._parseString((typeDef.ns ? typeDef.ns + ':' : '') + typeDef.type);
+      self._parseString((typeDef.ns ? typeDef.ns + ':' : '') + typeDef.type);
 
       if (typeDef.minOccurs !== undefined)
-        this.minOccurs = typeDef.minOccurs;
+        self.minOccurs = typeDef.minOccurs;
       if (typeDef.maxOccurs !== undefined)
-        this.maxOccurs = typeDef.maxOccurs;
+        self.maxOccurs = typeDef.maxOccurs;
       if (typeDef.minSize !== undefined)
-        this.minSize = typeDef.minSize;
+        self.minSize = typeDef.minSize;
       if (typeDef.maxSize !== undefined)
-        this.maxSize = typeDef.maxSize;
+        self.maxSize = typeDef.maxSize;
       if (typeDef.minValue !== undefined)
-        this.minValue = typeDef.minValue;
+        self.minValue = typeDef.minValue;
       if (typeDef.maxValue !== undefined)
-        this.maxValue = typeDef.maxValue;
+        self.maxValue = typeDef.maxValue;
       if (typeDef.pattern !== undefined)
-        this.pattern = typeDef.pattern;
+        self.pattern = typeDef.pattern;
       if (typeDef.optional)
-        this.optional = typeDef.optional;
-      if (typeDef.onvalidate)
-        this.onvalidate = typeDef.onvalidate;
-      if (this.type === 'object' && typeDef.items) {
+        self.optional = typeDef.optional;
+      if (typeDef.onValidate)
+        self.onValidate = typeDef.onValidate;
+      if (self.type === 'object' && typeDef.items) {
         let items = typeDef.items;
-        this.items = {};
+        self.items = {};
         if (typeof items === 'object') {
-          Object.getOwnPropertyNames(items).forEach(k => {
-            this.items[k] = new SchemaItem(k, items[k]);
+          Object.getOwnPropertyNames(items).forEach((k) => {
+            self.items[k] = new SchemaItem(k, items[k]);
           });
         } else {
           if (!Array.isArray(items))
             items = [items];
-          for (let i of items) {
-            let items = i.split(/\s*;\s*/);
-            for (let item of items) {
-              let a = item.match(/([\w ]+)\:([\s\S]*)/);
+          for (const i of items) {
+            const items = i.split(/\s*;\s*/);
+            for (const item of items) {
+              const a = item.match(/([\w ]+):([\s\S]*)/);
               if (!a)
                 throw new SchemaError(`Invalid definition for "${name}"`);
               a[1] = a[1].trim();
-              if (this.items[a[1]])
+              if (self.items[a[1]])
                 throw new SchemaError(`Item ${a[1]} already defined`);
-              this.items[a[1]] = new SchemaItem(a[1], a[2]);
+              self.items[a[1]] = new SchemaItem(a[1], a[2]);
             }
           }
-
         }
       }
     }
-    this.validate();
+    self.validate();
+    return self;
   }
 
   /**
@@ -309,8 +316,7 @@ class SchemaItem {
    * @private
    */
   _parseString(str) {
-
-    let m = str.match(parseStringPattern);
+    const m = str.match(parseStringPattern);
     if (!m)
       throw new SchemaError('Invalid type definition for "' + this.name + '"');
 
@@ -323,7 +329,7 @@ class SchemaItem {
 
     // Has size limit or min, max values?
     if (m[4] !== undefined) {
-      let typ = this.type.toLowerCase();
+      const typ = this.type.toLowerCase();
 
       if (typ.match(/^(integer|long|number|double|date)$/)) {
         if (m[5] !== undefined) {
@@ -333,8 +339,7 @@ class SchemaItem {
           this.minValue = undefined;
           this.maxValue = m[4];
         }
-      }
-      else if (typ === 'string') {
+      } else if (typ === 'string') {
         if (m[5] !== undefined) {
           this.minSize = m[4];
           this.maxSize = m[5];
@@ -364,11 +369,12 @@ class SchemaItem {
     // Regex pattern
     if (m[9])
       this.pattern = m[9].substring(1, m[9].length - 1);
-
   }
 
   get realType() {
-    let typ = this, t2, schema;
+    let typ = this;
+    let t2;
+    let schema;
     while (internalTypes.indexOf(typ.type) < 0) {
       schema = Schema.get(typ.ns);
       t2 = schema.get(typ.type);
@@ -384,7 +390,6 @@ class SchemaItem {
    */
 
   validate() {
-
     let typ = this.realType;
 
     typ = typ.toLowerCase();
@@ -469,9 +474,9 @@ class SchemaItem {
     if (this.optional !== undefined)
       this.optional = !!this.optional;
 
-    if (this.onvalidate && typeof this.onvalidate !== 'function')
+    if (this.onValidate && typeof this.onValidate !== 'function')
       throw new SchemaError(
-          `Invalid definition for "${this.name}". "onvalidate" have to be a function.`);
+          `Invalid definition for "${this.name}". "onValidate" have to be a function.`);
 
     // validate regex pattern
     if (this.pattern) {
@@ -488,12 +493,12 @@ class SchemaItem {
    * Deserialize input value to JS
    *
    * @param {*} input
-   * @returns {*}
+   * @return {*}
    * @public
    */
   deserialize(input) {
-    let merged = this._merge(),
-        out;
+    const merged = this._merge();
+    let out;
 
     if (this.minOccurs !== undefined || this.maxOccurs !== undefined) {
       if (this.minOccurs && input.length < this.minOccurs)
@@ -521,7 +526,7 @@ class SchemaItem {
    *
    * @param {Object} typeObj
    * @param {*} input
-   * @returns {*}
+   * @return {*}
    * @public
    */
   _deserialize(typeObj, input) {
@@ -565,8 +570,8 @@ class SchemaItem {
           if (typeObj.items) {
             out = {};
             Object.getOwnPropertyNames(typeObj.items).forEach(name => {
-              let ti = typeObj.items[name],
-                  val = input[ti.name];
+              const ti = typeObj.items[name];
+              const val = input[ti.name];
               out[name] = ti.deserialize(val);
             });
           } else out = input;
@@ -574,15 +579,14 @@ class SchemaItem {
         }
       }
 
-      if (typeObj.onvalidate)
-        out = typeObj.onvalidate(typeObj, out);
+      if (typeObj.onValidate)
+        out = typeObj.onValidate(typeObj, out);
     }
 
     if (!typeObj.optional && (out === undefined || out === null || out === ''))
       throw new DeserializeError(`Parameter "${typeObj.name}" is required`);
 
     if (out) {
-
       // Validate pattern
       if (typeObj.pattern && !String(out).match(typeObj.pattern))
         throw new DeserializeError(`Input value does not match given pattern`);
@@ -617,23 +621,25 @@ class SchemaItem {
   }
 
   _merge() {
-    let typ = this, t2, schema, out = {name: this.name};
+    let typ = this;
+    const out = {name: this.name};
+    let schema;
 
     while (typ) {
       out.type = typ.type.toLowerCase();
-      let fields = [
-            'pattern',
-            'minSize',
-            'maxSize',
-            'minOccurs',
-            'maxOccurs',
-            'minValue',
-            'maxValue',
-            'optional',
-            'onvalidate'],
-          field;
+      const fields = [
+        'pattern',
+        'minSize',
+        'maxSize',
+        'minOccurs',
+        'maxOccurs',
+        'minValue',
+        'maxValue',
+        'optional',
+        'onValidate'];
+
       for (let i = 0; i < fields.length; i++) {
-        field = fields[i];
+        const field = fields[i];
         if (out[field] === undefined && typ[field] !== undefined)
           out[field] = typ[field];
       }
@@ -661,6 +667,6 @@ class SchemaItem {
  */
 
 exports = module.exports = {
-  Schema: Schema,
-  SchemaItem: SchemaItem
+  Schema,
+  SchemaItem
 };

@@ -4,19 +4,16 @@
  * MIT Licensed
  */
 
-/**
- * External module dependencies.
- */
+/* External module dependencies. */
 
 const url = require('url');
 const path = require('path');
-const debug = require('debug')('eonc:dynrouter');
+const fs = require('fs');
 
-/**
- * Internal module dependencies.
- */
-const errors = require('./errors');
+/* Internal module dependencies. */
 const Endpoint = require('./endpoint');
+
+const APP_ROOT = path.dirname(require.main.filename);
 
 /**
  * Create a new DynamicRouter handler
@@ -44,6 +41,8 @@ class DynamicRouter {
       this.prefix = cfg.prefix;
     if (cfg.suffix !== undefined)
       this.suffix = cfg.suffix;
+    if (cfg.defaultFile !== undefined)
+      this.defaultFile = cfg.defaultFile;
     if (cfg.onMatch !== undefined)
       this.onMatch = cfg.onMatch;
     if (cfg.onExecute !== undefined)
@@ -58,47 +57,52 @@ class DynamicRouter {
    */
 
   handle(req, res, next) {
+    const self = this;
+    const pt = url.parse(req.url).pathname;
+    const basename = path.basename(pt);
+    let dir = path.join((self.localDir), path.dirname(pt));
+    if (!path.isAbsolute(dir))
+      dir = path.join(APP_ROOT, dir);
+    let file = path.join(dir,
+        (self.prefix || '') + basename + (self.suffix || '') + '.js');
 
-    let pt = url.parse(req.url).pathname;
-    let dir = path.join((this.localDir), path.dirname(pt));
-    let filename = (this.prefix || '') + path.basename(pt) +
-        (this.suffix || '');
-
-    filename = path.join(dir, filename);
-
-    if (!path.isAbsolute(filename))
-      filename = path.join(path.dirname(require.main.filename), filename);
-
-    if (typeof this.onMatch === 'function' && !this.onMatch(filename)) {
-      next();
-      return;
-    }
-
-    try {
-      let ep = require(filename);
-      if (ep instanceof Endpoint) {
-        if (typeof this.onExecute === 'function') {
-          if (this.onExecute(filename, ep, req, res)) {
-            res.end();
-            return;
-          }
-        }
-        ep.handle(req, res);
-      } else {
-        res.writeHead(400, 'You can not access this resource');
-        res.end();
+    fs.access(file, fs.constants.F_OK, (err) => {
+      if (err) {
+        file = path.join(dir, basename,
+            (self.defaultFile || '_default') + '.js');
+        fs.access(file, fs.constants.F_OK, (err) => {
+          if (err)
+            next();
+          else callEndpoint(file);
+        });
+      } else callEndpoint(file);
+    });
+    
+    function callEndpoint(filename) {
+      if (typeof self.onMatch === 'function' && !self.onMatch(filename)) {
+        next();
+        return;
       }
-    } catch (e) {
-      next();
+      try {
+        const ep = require(filename);
+        if (ep instanceof Endpoint) {
+          if (typeof self.onExecute === 'function') {
+            if (self.onExecute(filename, ep, req, res)) {
+              res.end();
+              return;
+            }
+          }
+          ep.handle(req, res);
+        } else {
+          res.writeHead(400, 'You can not access this resource');
+          res.end();
+        }
+      } catch (e) {
+        next();
+      }
     }
 
   }
-
 }
-
-/**
- * Module exports.
- * @public
- */
 
 exports = module.exports = DynamicRouter;

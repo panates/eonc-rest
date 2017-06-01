@@ -4,16 +4,12 @@
  * MIT Licensed
  */
 
-/**
- * External module dependencies.
- */
+/* External module dependencies. */
 
 const url = require('url');
 const debug = require('debug')('eonc:endpoint');
 
-/**
- * Internal module dependencies.
- */
+/* Internal module dependencies. */
 const errors = require('./errors');
 const {Schema} = require('./schema');
 
@@ -41,6 +37,7 @@ class Endpoint {
    */
   all(inputTypeDef, handler) {
     this.setHandler('ALL', inputTypeDef, handler);
+    return this;
   }
 
   /**
@@ -53,6 +50,7 @@ class Endpoint {
    */
   onGet(inputTypeDef, handler) {
     this.setHandler('GET', inputTypeDef, handler);
+    return this;
   }
 
   /**
@@ -65,6 +63,7 @@ class Endpoint {
    */
   onPatch(inputTypeDef, handler) {
     this.setHandler('PATCH', inputTypeDef, handler);
+    return this;
   }
 
   /**
@@ -77,6 +76,7 @@ class Endpoint {
    */
   onPost(inputTypeDef, handler) {
     this.setHandler('POST', inputTypeDef, handler);
+    return this;
   }
 
   /**
@@ -89,6 +89,7 @@ class Endpoint {
    */
   onPut(inputTypeDef, handler) {
     this.setHandler('PUT', inputTypeDef, handler);
+    return this;
   }
 
   /**
@@ -101,6 +102,7 @@ class Endpoint {
    */
   onDelete(inputTypeDef, handler) {
     this.setHandler('DELETE', inputTypeDef, handler);
+    return this;
   }
 
   /**
@@ -113,7 +115,6 @@ class Endpoint {
    * @protected
    */
   setHandler(method, inputTypeDef, handler) {
-
     if (typeof inputTypeDef === 'function') {
       handler = inputTypeDef;
       inputTypeDef = undefined;
@@ -142,11 +143,11 @@ class Endpoint {
    * @public
    */
   handle(req, res) {
-    let method = req.method;
-    let layer = this._handlers[method] || this._handlers['ALL'];
+    const method = req.method;
+    const layer = this._handlers[method] || this._handlers['ALL'];
     if (layer && layer.handler) {
       try {
-        let query = url.parse(req.url, true).query;
+        const query = url.parse(req.url, true).query;
         req.params = this._types.deserialize(layer.method, query);
         // call handler
         layer.handler(req, res);
@@ -161,12 +162,13 @@ class Endpoint {
           req.method + ' method';
       res.end();
     }
-    if (res.statusCode >= 400 && res.statusCode < 500)
+    if (res.statusCode >= 400 && res.statusCode < 500) { //noinspection JSUnresolvedVariable
       debug('W: %s | %s - %s', this.fullRoute, res.statusCode,
           res.statusMessage);
-    else if (res.statusCode >= 500 && res.statusCode < 600)
+    } else if (res.statusCode >= 500 && res.statusCode < 600) { //noinspection JSUnresolvedVariable
       debug('E: %s | %s - %s', this.fullRoute, res.statusCode,
           res.statusMessage);
+    }
   }
 
 }

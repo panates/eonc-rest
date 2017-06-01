@@ -9,6 +9,7 @@ class CustomError extends Error {
   constructor(message) {
     super(message);
     this.name = this.constructor.name;
+    //noinspection JSUnresolvedFunction
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -36,6 +37,9 @@ class InvalidRequestError extends HttpError {
  * @public
  */
 
-exports.HttpError = HttpError;
-exports.ImplementationError = ImplementationError;
-exports.InvalidRequestError = InvalidRequestError;
+module.exports = {
+  HttpError,
+  ImplementationError,
+  InvalidRequestError
+};
+

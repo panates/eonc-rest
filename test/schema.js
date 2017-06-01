@@ -184,12 +184,12 @@ describe('Schema', function () {
                 .expect(200, '', done);
         });
 
-        it('should run onvalidate', function (done) {
+        it('should run onValidate', function (done) {
 
             ep.all({
                 prm1: {
                     type: "string",
-                    onvalidate: function (name, val) {
+                    onValidate: function (name, val) {
                         return val + "validated";
                     }
                 }

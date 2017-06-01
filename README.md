@@ -36,7 +36,7 @@ ep.onGet({
             type: "string",
             minSize: 3,
             maxSize: 15,
-            onvalidate: function (type, inp) {
+            onValidate: function (type, inp) {
                 return inp + " validated";
             }
         },
@@ -125,7 +125,7 @@ ep.onGet(
             maxValue: 100,      // field value must be between 1-100
             minOccurs: 0,
             maxOccurs: 10,      // this is an array field that can have 10 items max
-            onvalidate: function (type, inp) {
+            onValidate: function (type, inp) {
                 // custom validation handler
                 return inp;
             }

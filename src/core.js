@@ -11,7 +11,6 @@
 /* External module dependencies. */
 const {EventEmitter} = require('events');
 const http = require('http');
-const path = require('path');
 const finalhandler = require('finalhandler');
 const parseUrl = require('parseurl');
 const debug = require('debug')('eonc:resthandler');
@@ -30,7 +29,9 @@ const env = process.env.NODE_ENV || 'development';
 const defer = typeof setImmediate === 'function'
     ? setImmediate
     : function(fn) {
-      process.nextTick(fn.bind.apply(fn, arguments));
+      process.nextTick(// eslint-disable-next-line
+          fn.bind.apply(fn, // eslint-disable-next-line
+              arguments));
     };
 
 /**
@@ -41,7 +42,6 @@ const defer = typeof setImmediate === 'function'
  */
 
 function createRestHandler() {
-
   function RestHandler(req, res, next) {
     RestHandler.handle(req, res, next);
   }
@@ -53,7 +53,7 @@ function createRestHandler() {
   return RestHandler;
 }
 
-let proto = {
+const proto = {
 
   /**
    * Utilize the given middleware/endpoint `handle` to the given `route`,
@@ -67,17 +67,16 @@ let proto = {
    * not be invoked for _/_, or _/posts_.
    *
    * @param {String|Function|RestHandler} route, callback or server
-   * @param {Function|RestHandler|Endpoint} fn callback, RestHandler, or EndPoint
+   * @param {Function|RestHandler|Endpoint|DynamicRouter} fn callback, RestHandler, or EndPoint
    * @return {RestHandler} for chaining
    * @public
    */
 
   use: function use(route, fn) {
-
     // Register handlers
     let lhandle = fn;
     let lpath = route;
-    let fullRoute = this.fullRoute ? this.fullRoute + route : route;
+    const fullRoute = this.fullRoute ? this.fullRoute + route : route;
 
     // default route to '/'
     if (typeof route !== 'string') {
@@ -93,22 +92,23 @@ let proto = {
 
     // wrap sub-apps
     if (typeof lhandle === 'function' && typeof lhandle.handle === 'function') {
-      let subHandler = lhandle;
+      const subHandler = lhandle;
       subHandler.route = lpath;
       subHandler.fullRoute = fullRoute;
       lhandle = function(req, res, next) {
         subHandler(req, res, next);
       };
-    }
-    // wrap Constructors
-    else if (lhandle instanceof constructor &&
-        typeof lhandle.handle === 'function') {
-      let middleware = lhandle;
-      middleware.route = lpath;
-      middleware.fullRoute = fullRoute;
-      lhandle = function(req, res, next) {
-        middleware.handle(req, res, next);
-      };
+    } else { //noinspection JSUnresolvedVariable
+      if (lhandle instanceof constructor && /* wrap Constructors */
+          typeof lhandle.handle === 'function') {
+        const middleware = lhandle;
+        middleware.route = lpath;
+        middleware.fullRoute = fullRoute;
+        lhandle = function(req, res, next) {
+          //noinspection JSCheckFunctionSignatures
+          middleware.handle(req, res, next);
+        };
+      }
     }
 
     // strip trailing slash
@@ -130,7 +130,7 @@ let proto = {
    * A DynamicRouter object will be mounted for given path.
    * DynamicRouter lookups and loads EndPoints on request time.
    *
-   * @param path
+   * @param {string} path
    * @param {String|Object} cfg Configuration object or local path for api root
    */
   mount(path, cfg) {
@@ -150,15 +150,15 @@ let proto = {
 
   handle: function handle(req, res, out) {
     let index = 0;
-    let protohost = getProtohost(req.url) || '';
+    const protohost = getProtoHost(req.url) || '';
     let removed = '';
     let slashAdded = false;
-    let stack = this.stack;
+    const stack = this.stack;
 
     // final function handler
-    let done = out || finalhandler(req, res, {
+    const done = out || finalhandler(req, res, {
           env: env,
-          onerror: logerror
+          onerror: logError
         });
 
     // store the original URL
@@ -176,7 +176,7 @@ let proto = {
       }
 
       // next callback
-      let layer = stack[index++];
+      const layer = stack[index++];
 
       // all done
       if (!layer) {
@@ -185,8 +185,9 @@ let proto = {
       }
 
       // route data
-      let path = parseUrl(req).pathname || '/';
-      let route = layer.route;
+      //noinspection JSUnresolvedVariable
+      const path = parseUrl(req).pathname || '/';
+      const route = layer.route;
 
       // skip this layer if the route doesn't match
       if (path.toLowerCase().substr(0, route.length) !== route.toLowerCase()) {
@@ -194,7 +195,7 @@ let proto = {
       }
 
       // skip if route match does not border "/", ".", or end
-      let c = path[route.length];
+      const c = path[route.length];
       if (c !== undefined && '/' !== c && '.' !== c) {
         return next(err);
       }
@@ -244,9 +245,8 @@ let proto = {
    * @public
    */
 
-  listen: function listen() {
-    let server = http.createServer(this);
-    return server.listen.apply(server, arguments);
+  listen: function listen(...args) {
+    return http.createServer(this).listen(...args);
   }
 
 };
@@ -257,9 +257,9 @@ let proto = {
  */
 
 function call(handle, route, err, req, res, next) {
-  let arity = handle.length;
+  const arity = handle.length;
   let error = err;
-  let hasError = Boolean(err);
+  const hasError = Boolean(err);
 
   debug('I: %s(%s) %s > %s', req.method, handle.name || '<anonymous>', route,
       req.originalUrl);
@@ -290,8 +290,9 @@ function call(handle, route, err, req, res, next) {
  * @private
  */
 
-function logerror(err) {
-  if (env !== 'test') console.error(err.stack || err.toString());
+function logError(err) {
+  if (env !== 'test') // eslint-disable-next-line
+    console.error(err.stack || err.toString());
 }
 
 /**
@@ -301,16 +302,16 @@ function logerror(err) {
  * @private
  */
 
-function getProtohost(url) {
+function getProtoHost(url) {
   if (url.length === 0 || url[0] === '/') {
     return undefined;
   }
 
-  let searchIndex = url.indexOf('?');
-  let pathLength = searchIndex !== -1
+  const searchIndex = url.indexOf('?');
+  const pathLength = searchIndex !== -1
       ? searchIndex
       : url.length;
-  let fqdnIndex = url.substr(0, pathLength).indexOf('://');
+  const fqdnIndex = url.substr(0, pathLength).indexOf('://');
 
   return fqdnIndex !== -1
       ? url.substr(0, url.indexOf('/', 3 + fqdnIndex))

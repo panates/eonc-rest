@@ -1,9 +1,9 @@
-const rest = require('../../..'); // eonc-rest
+const rest = require('eonc-rest');
 
-// Customer table
-let customers = {
+// Company table
+const companies = {
   1: {
-    name: 'John Marvell',
+    name: 'My Company',
     phone: '555-1234567',
     balance: 0,
     note: 'Some note'
@@ -11,25 +11,25 @@ let customers = {
 };
 
 // create the endpoint (api)
-let ep = rest.endpoint();
+const ep = rest.endpoint();
 
 // Handle Http GET method
 ep.onGet('id:ns1:id', function(req, res) {
-  let cust = customers[req.params.id];
-  if (!cust)
+  const record = companies[req.params.id];
+  if (!record)
     throw new rest.HttpError(400, 'Record not found');
   res.writeHead(200, {'Content-Type': 'application/json'});
-  res.end(JSON.stringify(cust));
+  res.end(JSON.stringify(record));
 });
 
 // Handle Http PUT method
-ep.onPut('id:ns1:id; name:ns1:name; phone:ns1:phonenumber; node:string',
+ep.onPut('id:ns1:id; name:ns1:name; phone:ns1:phonenumber; note:string',
     function(req, res) {
-      let cust = customers[req.params.id] || {};
-      cust.name = req.params.name;
-      cust.phone = req.params.phone;
-      cust.note = req.params.note;
-      customers[req.params.id] = cust;
+      const record = companies[req.params.id] || {};
+      record.name = req.params.name;
+      record.phone = req.params.phone;
+      record.note = req.params.note;
+      companies[req.params.id] = record;
       res.end('Record created');
     });
 
@@ -48,23 +48,23 @@ ep.onPatch({
       }
     },
     function(req, res) {
-      let cust = customers[req.params.id] || {};
+      const record = companies[req.params.id] || {};
       if (req.params.name)
-        cust.name = req.params.name;
+        record.name = req.params.name;
       if (req.params.phone)
-        cust.phone = req.params.phone;
+        record.phone = req.params.phone;
       if (req.params.note)
-        cust.note = req.params.note;
-      customers[req.params.id] = cust;
+        record.note = req.params.note;
+      companies[req.params.id] = record;
       res.end('Record updated');
     });
 
 // Handle Http DELETE method
 ep.onDelete('id:ns1:id', function(req, res) {
-  let cust = customers[req.params.id];
-  if (!cust)
+  const record = companies[req.params.id];
+  if (!record)
     throw new rest.HttpError(400, 'Record not found');
-  delete customers[req.params.id];
+  delete companies[req.params.id];
   res.end('Record deleted');
 });
 

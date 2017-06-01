@@ -1,4 +1,4 @@
-const rest = require('../../..'); // eonc-rest
+const rest = require('eonc-rest');
 
 // Customer table
 let customers = {
@@ -40,7 +40,7 @@ ep.onPatch({
         note: {
             type: "string",
             optional: true,
-            onvalidate: function (typ, val) {
+            onValidate: function (typ, val) {
                 // You can validate and modify value here
                 return val + " (validated)";
             }

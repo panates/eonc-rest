@@ -348,22 +348,22 @@ describe('SchemaItem', function () {
             done();
         });
 
-        it('should define "onvalidate"', function (done) {
+        it('should define "onValidate"', function (done) {
             item = new SchemaItem("name", {
                 type: "long",
-                onvalidate: function () {
+                onValidate: function () {
                 }
             });
-            assert.ok(typeof item.onvalidate === "function");
+            assert.ok(typeof item.onValidate === "function");
             done();
         });
 
-        it('should check "onvalidate" is function', function (done) {
+        it('should check "onValidate" is function', function (done) {
             let ok;
             try {
                 item = new SchemaItem("name", {
                     type: "long",
-                    onvalidate: "string"
+                    onValidate: "string"
                 });
             } catch (e) {
                 ok = true;
