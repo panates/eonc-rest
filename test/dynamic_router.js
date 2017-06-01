@@ -37,7 +37,7 @@ describe('app.mount(path, cfg)', function() {
     let cfg = {
       prefix: 'prefix',
       suffix: 'suffix',
-      onMatch: function() {
+      match: function() {
       },
       onExecute: function() {
       },
@@ -48,7 +48,7 @@ describe('app.mount(path, cfg)', function() {
     assert.equal(router.localDir, './');
     assert.equal(router.prefix, cfg.prefix);
     assert.equal(router.suffix, cfg.suffix);
-    assert.equal(router.onMatch, cfg.onMatch);
+    assert.equal(router.match, cfg.match);
     assert.equal(router.onExecute, cfg.onExecute);
     done();
   });
@@ -101,11 +101,11 @@ describe('app.mount(path, cfg)', function() {
     request(app).get('/blog?id=1').expect(200, 'blogjs', done);
   });
 
-  it('should call onMatch callback', function(done) {
+  it('should call match callback', function(done) {
     let ok;
     app.mount('/', {
       localDir: apiDir,
-      onMatch: function() {
+      match: function() {
         ok = true;
         return true;
       },
@@ -118,12 +118,12 @@ describe('app.mount(path, cfg)', function() {
     });
   });
 
-  it('should call onMatch callback only if it is function', function(done) {
+  it('should call match callback only if it is function', function(done) {
     app.mount('/', {
       localDir: apiDir,
-      onMatch: '-',
+      match: '-',
     });
-    request(app).get('/ep_blog?id=1').expect(200, 'blogjs', done);
+    request(app).get('/ep_blog?id=1').expect(404, done);
   });
 
   it('should call onExecute callback', function(done) {
@@ -138,10 +138,10 @@ describe('app.mount(path, cfg)', function() {
     request(app).get('/ep_blog?id=1').expect(200, 'ok', done);
   });
 
-  it('should skip file if onMatch returns false', function(done) {
+  it('should skip file if match returns false', function(done) {
     app.mount('/', {
       localDir: apiDir,
-      onMatch: function() {
+      match: function() {
         return false;
       },
     });

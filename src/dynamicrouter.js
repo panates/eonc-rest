@@ -43,8 +43,8 @@ class DynamicRouter {
       this.suffix = cfg.suffix;
     if (cfg.defaultFile !== undefined)
       this.defaultFile = cfg.defaultFile;
-    if (cfg.onMatch !== undefined)
-      this.onMatch = cfg.onMatch;
+    if (cfg.match !== undefined)
+      this.match = cfg.match;
     if (cfg.onExecute !== undefined)
       this.onExecute = cfg.onExecute;
   }
@@ -64,44 +64,43 @@ class DynamicRouter {
     if (!path.isAbsolute(dir))
       dir = path.join(APP_ROOT, dir);
     let file = path.join(dir,
-        (self.prefix || '') + basename + (self.suffix || '') + '.js');
+        (self.prefix || '') + basename + (self.suffix || ''));
+    let ep;
 
-    fs.access(file, fs.constants.F_OK, (err) => {
-      if (err) {
-        file = path.join(dir, basename,
-            (self.defaultFile || '_default') + '.js');
-        fs.access(file, fs.constants.F_OK, (err) => {
-          if (err)
-            next();
-          else callEndpoint(file);
-        });
-      } else callEndpoint(file);
-    });
-    
-    function callEndpoint(filename) {
-      if (typeof self.onMatch === 'function' && !self.onMatch(filename)) {
-        next();
-        return;
-      }
-      try {
-        const ep = require(filename);
-        if (ep instanceof Endpoint) {
-          if (typeof self.onExecute === 'function') {
-            if (self.onExecute(filename, ep, req, res)) {
-              res.end();
-              return;
-            }
-          }
-          ep.handle(req, res);
-        } else {
-          res.writeHead(400, 'You can not access this resource');
-          res.end();
+    function doRequire(filename) {
+      if (!self.match ||
+          (typeof self.match === 'function' && self.match(filename))) {
+        try {
+          return require(file);
+        } catch (e) {
+          return false;
         }
-      } catch (e) {
-        next();
       }
     }
 
+    if (!(ep = doRequire(file))) {
+      file = path.join(dir, basename, (self.defaultFile || '_default'));
+      if (!(ep = doRequire(file))) {
+        next();
+        return;
+      }
+    }
+
+    if (ep && ep instanceof Endpoint) {
+      if (typeof self.onExecute === 'function') {
+        if (self.onExecute(file, ep, req, res)) {
+          res.end();
+          return;
+        }
+      }
+      ep.handle(req, res);
+    } else {
+      res.writeHead(400, 'You can not access this resource');
+      res.end();
+      return;
+    }
+
+    next();
   }
 }
 

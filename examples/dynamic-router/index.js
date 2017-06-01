@@ -19,7 +19,7 @@ app.mount({
       prefix: 'ep_', // Endpoint file name prefix is _ep
       suffix: '.js', // Endpoint file name suffix is .js  // This is default behavior
       defaultFile: '_default', // If request addresses to a folder, router will seek for default file
-      onMatch: function(filename) {
+      match: function(filename) {
         // accept any file except ep_skipthis.js
         return (path.basename(filename) !== 'ep_skipthis.js');
       }
