@@ -4,8 +4,10 @@
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Build Status][travis-image]][travis-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
-[![Dependencies][dependencies-image]][dependencies-url]
 [![Gitter chat][gitter-image]][gitter-url]
+
+[![Dependencies][dependencies-image]][dependencies-url]
+[![DevDependencies][devdependencies-image]][devdependencies-url]
 [![Package Quality][quality-image]][quality-url]
 
 [EONC-Rest](https://github.com/panates/eonc-rest) is a fast Rest-Application framework for [NodeJS](http://nodejs.org), makes building rest applications easy.
@@ -235,6 +237,8 @@ The core of middleware support is extended from [connect](https://github.com/sen
 [downloads-url]: https://npmjs.org/package/eonc-rest
 [dependencies-image]: https://david-dm.org/panates/eonc-rest.svg
 [dependencies-url]:https://david-dm.org/panates/eonc-rest#info=dependencies
+[devdependencies-image]: https://david-dm.org/panates/eonc-rest/dev-status.svg
+[devdependencies-url]:https://david-dm.org/panates/eonc-rest?type=dev
 [gitter-image]: https://badges.gitter.im/panates/eonc-rest.svg
 [gitter-url]: https://gitter.im/panates/eonc-rest?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [quality-image]: http://npm.packagequality.com/shield/eonc-rest.png
