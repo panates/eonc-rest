@@ -14,7 +14,8 @@ const companies = {
 const ep = rest.endpoint();
 
 // Handle Http GET method
-ep.onGet('id:ns1:id', function(req, res) {
+ep.onGet('id:ns1:id', async (req, res) => {
+  throw new Error('aaaaaa');
   const record = companies[req.params.id];
   if (!record)
     throw new rest.HttpError(400, 'Record not found');

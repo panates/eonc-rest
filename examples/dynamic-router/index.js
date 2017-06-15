@@ -26,6 +26,10 @@ app.mount({
     }
 );
 
+app.on('error', (err) => {
+  console.error(err);
+});
+
 //create node.js http server and listen on port
 let server = http.createServer(app);
 
