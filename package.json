@@ -8,7 +8,7 @@
   ],
   "license": "MIT",
   "repository": "panates/eonc-rest",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "keywords": [
     "eonc",
     "rest",
@@ -43,7 +43,7 @@
     "LICENSE",
     "README.md",
     "index.js",
-    "src/"
+    "lib/"
   ],
   "scripts": {
     "test": "mocha --require test/support/env --reporter spec --bail --check-leaks test/",

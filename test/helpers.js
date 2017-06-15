@@ -3,7 +3,7 @@
  */
 
 const assert = require('assert');
-const helpers = require('../src/helpers');
+const helpers = require('../lib/helpers');
 
 describe('helpers', function () {
 
