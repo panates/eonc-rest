@@ -53,7 +53,7 @@ describe('Custom errors', function () {
 
         request(app)
             .get('/blog')
-            .expect(400, '', done);
+            .expect(400, done);
     });
 
 });
