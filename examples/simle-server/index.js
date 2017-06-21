@@ -2,7 +2,7 @@ const rest = require('eonc-rest');
 const http = require('http');
 
 // Create the server handler
-let app = rest.handler();
+let app = rest();
 
 // Create a global schema
 let schema1 = rest.schema("ns1:app1.test.url");
