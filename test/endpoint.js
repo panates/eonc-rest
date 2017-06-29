@@ -159,7 +159,7 @@ describe('Endpoint', function () {
 
             request(app)
                 .get('/blog')
-                .expect(500, '', done);
+                .expect(500, 'Error', done);
         });
     });
 
