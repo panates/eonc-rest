@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * Tests for custom errors
  */
@@ -7,53 +8,55 @@ const rest = require('..');
 const http = require('http');
 const request = require('supertest');
 
-describe('Custom errors', function () {
+describe('Custom errors', function() {
 
-    let app;
-    let ep;
+  let app;
+  let ep;
 
-    beforeEach(function () {
-        app = rest();
-        ep = new rest.Endpoint();
+  beforeEach(function() {
+    app = rest();
+    ep = new rest.Endpoint();
+    app.on('error', () => {
+    });
+  });
+
+  it('should handle ImplementationError', function(done) {
+
+    ep.all(function(req, res) {
+      throw new rest.ImplementationError();
     });
 
-    it('should handle ImplementationError', function (done) {
+    app.use('/blog', ep);
 
-        ep.all(function (req, res) {
-            throw new rest.ImplementationError();
-        });
+    request(app)
+        .get('/blog')
+        .expect(500, done);
+  });
 
-        app.use('/blog', ep);
+  it('should handle custom HttpError', function(done) {
 
-        request(app)
-            .get('/blog')
-            .expect(500, done);
+    ep.all(function(req, res) {
+      throw new rest.HttpError(401);
     });
 
-    it('should handle custom HttpError', function (done) {
+    app.use('/blog', ep);
 
-        ep.all(function (req, res) {
-            throw new rest.HttpError(401);
-        });
+    request(app)
+        .get('/blog')
+        .expect(401, done);
+  });
 
-        app.use('/blog', ep);
+  it('should handle InvalidRequestError', function(done) {
 
-        request(app)
-            .get('/blog')
-            .expect(401, done);
+    ep.all(function(req, res) {
+      throw new rest.InvalidRequestError();
     });
 
-    it('should handle InvalidRequestError', function (done) {
+    app.use('/blog', ep);
 
-        ep.all(function (req, res) {
-            throw new rest.InvalidRequestError();
-        });
-
-        app.use('/blog', ep);
-
-        request(app)
-            .get('/blog')
-            .expect(400, done);
-    });
+    request(app)
+        .get('/blog')
+        .expect(400, done);
+  });
 
 });
