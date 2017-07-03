@@ -1,10 +1,10 @@
-const rest = require('eonc-rest');
+const rest = require('../..');
 const http = require('http');
 const path = require('path');
 
 // Create the server handler
 let app = rest();
-/*
+
 // Create a global schema
 let schema1 = rest.schema('ns1:app1.test.url');
 
@@ -25,7 +25,7 @@ app.mount({
       }
     }
 );
- */
+
 app.on('error', (err) => {
   console.error(err);
 });
