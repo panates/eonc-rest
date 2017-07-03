@@ -1,7 +1,7 @@
 {
   "name": "eonc-rest",
   "description": "Web framework for fast restful applications",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": "Panates Ltd.",
   "contributors": [
     "Eray Hanoglu <e.hanoglu@panates.com>"
