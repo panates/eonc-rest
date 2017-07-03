@@ -8,10 +8,6 @@
     "es6": true,
     "node": true
   },
-  "ecmaFeatures": {
-    "destructuring": true,
-    "modules": true
-  },
   "rules": {
     "no-console": 1,
     "no-const-assign": 2,
@@ -30,6 +26,7 @@
     "require-jsdoc": 0,
     "comma-dangle": 0,
     "padded-blocks": 0,
-    "arrow-parens": 0
+    "arrow-parens": 0,
+    "curly": 0
   }
 }
