@@ -27,7 +27,7 @@ describe('Custom errors', function () {
 
         request(app)
             .get('/blog')
-            .expect(500, '', done);
+            .expect(500, done);
     });
 
     it('should handle custom HttpError', function (done) {
@@ -40,7 +40,7 @@ describe('Custom errors', function () {
 
         request(app)
             .get('/blog')
-            .expect(401, '', done);
+            .expect(401, done);
     });
 
     it('should handle InvalidRequestError', function (done) {
