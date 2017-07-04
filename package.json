@@ -23,6 +23,7 @@
     "express"
   ],
   "dependencies": {
+    "compression": "^1.6.2",
     "debug": "^2.6.8",
     "finalhandler": "^1.0.3",
     "jsonic": "^0.3.0",

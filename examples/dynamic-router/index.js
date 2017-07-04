@@ -1,9 +1,11 @@
 const rest = require('../..');
 const http = require('http');
 const path = require('path');
+const compression = require('compression');
 
 // Create the server handler
 let app = rest();
+app.use(compression());
 
 // Create a global schema
 let schema1 = rest.schema('ns1:app1.test.url');
