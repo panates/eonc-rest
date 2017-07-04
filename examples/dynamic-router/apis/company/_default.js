@@ -42,7 +42,7 @@ ep.onPatch({
       note: {
         type: 'string',
         optional: true,
-        onValidate: function(typ, val) {
+        onValidate: function(val, typ) {
           // You can validate and modify value here
           return val + ' (validated)';
         }
