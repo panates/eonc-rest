@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * Tests for mounting capabilities (extended from connect)
  * Original file ([connect]/test/mounting.js)
@@ -8,318 +9,318 @@ const rest = require('..');
 const http = require('http');
 const request = require('supertest');
 
-describe('app.use(middleware)', function(){
-    let app;
+describe('app.use(middleware)', function() {
+  let app;
 
-    beforeEach(function(){
-        app = rest();
+  beforeEach(function() {
+    app = rest();
+  });
+
+  it('should mount to root as default', function(done) {
+    app.use(function(req, res) {
+      res.end(req.url);
     });
 
-    it('should mount to root as default', function (done) {
-        app.use(function (req, res) {
-            res.end(req.url);
-        });
+    request(app)
+        .get('/blog')
+        .expect(200, '/blog', done);
+  });
 
-        request(app)
-            .get('/blog')
-            .expect(200, '/blog', done);
+  it('should match all paths with "/"', function(done) {
+    app.use('/', function(req, res) {
+      res.end(req.url);
     });
 
+    request(app)
+        .get('/blog')
+        .expect(200, '/blog', done);
+  });
 
-    it('should match all paths with "/"', function (done) {
-        app.use('/', function (req, res) {
-            res.end(req.url);
-        });
-
-        request(app)
-            .get('/blog')
-            .expect(200, '/blog', done);
+  it('should match full path', function(done) {
+    app.use('/blog', function(req, res) {
+      res.end(req.url);
     });
 
-    it('should match full path', function (done) {
-        app.use('/blog', function (req, res) {
-            res.end(req.url);
-        });
+    request(app)
+        .get('/blog')
+        .expect(200, '/', done);
+  });
 
-        request(app)
-            .get('/blog')
-            .expect(200, '/', done);
+  it('should match left-side of path', function(done) {
+    app.use('/blog', function(req, res) {
+      res.end(req.url);
     });
 
-    it('should match left-side of path', function (done) {
-        app.use('/blog', function (req, res) {
-            res.end(req.url);
-        });
+    request(app)
+        .get('/blog/article/1')
+        .expect(200, '/article/1', done);
+  });
 
-        request(app)
-            .get('/blog/article/1')
-            .expect(200, '/article/1', done);
+  it('should match up to dot', function(done) {
+    app.use('/blog', function(req, res) {
+      res.end(req.url);
     });
 
-    it('should match up to dot', function (done) {
-        app.use('/blog', function (req, res) {
-            res.end(req.url)
-        });
+    request(app)
+        .get('/blog.json')
+        .expect(200, done);
+  });
 
-        request(app)
-            .get('/blog.json')
-            .expect(200, done)
+  it('should not match shorter path', function(done) {
+    app.use('/blog-o-rama', function(req, res) {
+      res.end(req.url);
     });
 
-    it('should not match shorter path', function (done) {
-        app.use('/blog-o-rama', function (req, res) {
-            res.end(req.url);
-        });
+    request(app)
+        .get('/blog')
+        .expect(404, done);
+  });
 
-        request(app)
-            .get('/blog')
-            .expect(404, done);
+  it('should not end match in middle of component', function(done) {
+    app.use('/blog', function(req, res) {
+      res.end(req.url);
     });
 
-    it('should not end match in middle of component', function (done) {
-        app.use('/blog', function (req, res) {
-            res.end(req.url);
-        });
+    request(app)
+        .get('/blog-o-rama/article/1')
+        .expect(404, done);
+  });
 
-        request(app)
-            .get('/blog-o-rama/article/1')
-            .expect(404, done);
+  it('should be case insensitive (lower-case route, mixed-case request)', function(done) {
+    let blog = http.createServer(function(req, res) {
+      assert.equal(req.url, '/');
+      res.end('blog');
     });
 
-    it('should be case insensitive (lower-case route, mixed-case request)', function(done){
-        let blog = http.createServer(function(req, res){
-            assert.equal(req.url, '/');
-            res.end('blog');
-        });
+    app.use('/blog', blog);
 
-        app.use('/blog', blog);
+    request(app)
+        .get('/BLog')
+        .expect('blog', done);
+  });
 
-        request(app)
-            .get('/BLog')
-            .expect('blog', done);
+  it('should be case insensitive (mixed-case route, lower-case request)', function(done) {
+    let blog = http.createServer(function(req, res) {
+      assert.equal(req.url, '/');
+      res.end('blog');
     });
 
-    it('should be case insensitive (mixed-case route, lower-case request)', function(done){
-        let blog = http.createServer(function(req, res){
-            assert.equal(req.url, '/');
-            res.end('blog');
-        });
+    app.use('/BLog', blog);
 
-        app.use('/BLog', blog);
+    request(app)
+        .get('/blog')
+        .expect('blog', done);
+  });
 
-        request(app)
-            .get('/blog')
-            .expect('blog', done);
+  it('should be case insensitive (mixed-case route, mixed-case request)', function(done) {
+    let blog = http.createServer(function(req, res) {
+      assert.equal(req.url, '/');
+      res.end('blog');
     });
 
-    it('should be case insensitive (mixed-case route, mixed-case request)', function(done){
-        let blog = http.createServer(function(req, res){
-            assert.equal(req.url, '/');
-            res.end('blog');
-        });
+    app.use('/BLog', blog);
 
-        app.use('/BLog', blog);
+    request(app)
+        .get('/blOG')
+        .expect('blog', done);
+  });
 
-        request(app)
-            .get('/blOG')
-            .expect('blog', done);
+  it('should ignore fn.arity > 4', function(done) {
+    let invoked = [];
+
+    app.use(function(req, res, next, _a, _b) {
+      invoked.push(0);
+      next();
+    });
+    app.use(function(req, res, next) {
+      invoked.push(1);
+      next(new Error('err'));
+    });
+    app.use(function(err, req, res, next) {
+      invoked.push(2);
+      res.end(invoked.join(','));
     });
 
-    it('should ignore fn.arity > 4', function(done){
-        let invoked = [];
+    request(app)
+        .get('/')
+        .expect(200, '1,2', done);
+  });
 
-        app.use(function(req, res, next, _a, _b){
-            invoked.push(0);
-            next();
-        });
-        app.use(function(req, res, next){
-            invoked.push(1);
-            next(new Error('err'));
-        });
-        app.use(function(err, req, res, next){
-            invoked.push(2);
-            res.end(invoked.join(','));
-        });
+  describe('with a eonc app', function() {
+    it('should mount', function(done) {
+      let blog = rest();
 
-        request(app)
-            .get('/')
-            .expect(200, '1,2', done);
+      blog.use(function(req, res) {
+        assert.equal(req.url, '/');
+        res.end('blog');
+      });
+
+      app.use('/blog', blog);
+
+      request(app)
+          .get('/blog')
+          .expect(200, 'blog', done);
     });
 
-    describe('with a eonc app', function(){
-        it('should mount', function(done){
-            let blog = rest();
+    it('should retain req.originalUrl', function(done) {
+      let app = rest();
 
-            blog.use(function(req, res){
-                assert.equal(req.url, '/');
-                res.end('blog');
-            });
+      app.use('/blog', function(req, res) {
+        res.end(req.originalUrl);
+      });
 
-            app.use('/blog', blog);
-
-            request(app)
-                .get('/blog')
-                .expect(200, 'blog', done);
-        });
-
-        it('should retain req.originalUrl', function(done){
-            let app = rest();
-
-            app.use('/blog', function(req, res){
-                res.end(req.originalUrl);
-            });
-
-            request(app)
-                .get('/blog/post/1')
-                .expect(200, '/blog/post/1', done);
-        });
-
-        it('should adjust req.url', function(done){
-            app.use('/blog', function(req, res){
-                res.end(req.url);
-            });
-
-            request(app)
-                .get('/blog/post/1')
-                .expect(200, '/post/1', done);
-        });
-
-        it('should strip trailing slash', function(done){
-            let blog = rest();
-
-            blog.use(function(req, res){
-                assert.equal(req.url, '/');
-                res.end('blog');
-            });
-
-            app.use('/blog/', blog);
-
-            request(app)
-                .get('/blog')
-                .expect('blog', done);
-        });
-
-        it('should set .route', function(){
-            let blog = rest();
-            let admin = rest();
-            app.use('/blog', blog);
-            blog.use('/admin', admin);
-            assert.equal(app.route, '/');
-            assert.equal(blog.route, '/blog');
-            assert.equal(admin.route, '/admin');
-        });
-
-        it('should not add trailing slash to req.url', function(done) {
-            app.use('/admin', function(req, res, next) {
-                next();
-            });
-
-            app.use(function(req, res, next) {
-                res.end(req.url);
-            });
-
-            request(app)
-                .get('/admin')
-                .expect('/admin', done);
-        })
+      request(app)
+          .get('/blog/post/1')
+          .expect(200, '/blog/post/1', done);
     });
 
-    describe('with a node app', function(){
-        it('should mount', function(done){
-            let blog = http.createServer(function(req, res){
-                assert.equal(req.url, '/');
-                res.end('blog');
-            });
+    it('should adjust req.url', function(done) {
+      app.use('/blog', function(req, res) {
+        res.end(req.url);
+      });
 
-            app.use('/blog', blog);
-
-            request(app)
-                .get('/blog')
-                .expect('blog', done);
-        });
+      request(app)
+          .get('/blog/post/1')
+          .expect(200, '/post/1', done);
     });
 
-    describe('error handling', function(){
-        it('should send errors to airty 4 fns', function(done){
-            app.use(function(req, res, next){
-                next(new Error('msg'));
-            });
-            app.use(function(err, req, res, next){
-                res.end('got error ' + err.message);
-            });
+    it('should strip trailing slash', function(done) {
+      let blog = rest();
 
-            request(app)
-                .get('/')
-                .expect('got error msg', done);
-        });
+      blog.use(function(req, res) {
+        assert.equal(req.url, '/');
+        res.end('blog');
+      });
 
-        it('should skip to non-error middleware', function(done){
-            let invoked = false;
+      app.use('/blog/', blog);
 
-            app.use(function(req, res, next){
-                next(new Error('msg'));
-            });
-            app.use(function(req, res, next){
-                invoked = true;
-                next();
-            });
-            app.use(function(err, req, res, next){
-                res.end(invoked ? 'invoked' : err.message);
-            });
+      request(app)
+          .get('/blog')
+          .expect('blog', done);
+    });
 
-            request(app)
-                .get('/')
-                .expect(200, 'msg', done);
-        });
+    it('should set .route', function() {
+      let blog = rest();
+      let admin = rest();
+      app.use('/blog', blog);
+      blog.use('/admin', admin);
+      assert.equal(app.route, '/');
+      assert.equal(blog.route, '/blog');
+      assert.equal(admin.route, '/admin');
+    });
 
-        it('should start at error middleware declared after error', function(done){
-            let invoked = false;
+    it('should not add trailing slash to req.url', function(done) {
+      app.use('/admin', function(req, res, next) {
+        next();
+      });
 
-            app.use(function(err, req, res, next){
-                res.end('fail: ' + err.message);
-            });
-            app.use(function(req, res, next){
-                next(new Error('boom!'));
-            });
-            app.use(function(err, req, res, next){
-                res.end('pass: ' + err.message);
-            });
+      app.use(function(req, res, next) {
+        res.end(req.url);
+      });
 
-            request(app)
-                .get('/')
-                .expect(200, 'pass: boom!', done);
-        });
+      request(app)
+          .get('/admin')
+          .expect('/admin', done);
+    });
+  });
 
-        it('should stack error fns', function(done){
-            app.use(function(req, res, next){
-                next(new Error('msg'));
-            });
-            app.use(function(err, req, res, next){
-                res.setHeader('X-Error', err.message);
-                next(err);
-            });
-            app.use(function(err, req, res, next){
-                res.end('got error ' + err.message);
-            });
+  describe('with a node app', function() {
+    it('should mount', function(done) {
+      let blog = http.createServer(function(req, res) {
+        assert.equal(req.url, '/');
+        res.end('blog');
+      });
 
-            request(app)
-                .get('/')
-                .expect('X-Error', 'msg')
-                .expect(200, 'got error msg', done);
-        });
+      app.use('/blog', blog);
 
-        it('should invoke error stack even when headers sent', function(done){
-            app.use(function(req, res, next){
-                res.end('0');
-                next(new Error('msg'));
-            });
-            app.use(function(err, req, res, next){
-                done();
-            });
+      request(app)
+          .get('/blog')
+          .expect('blog', done);
+    });
+  });
 
-            request(app)
-                .get('/')
-                .end(function(){});
-        })
-    })
+  describe('error handling', function() {
+    it('should send errors to airty 4 fns', function(done) {
+      app.use(function(req, res, next) {
+        next(new Error('msg'));
+      });
+      app.use(function(err, req, res, next) {
+        res.end('got error ' + err.message);
+      });
+
+      request(app)
+          .get('/')
+          .expect('got error msg', done);
+    });
+
+    it('should skip to non-error middleware', function(done) {
+      let invoked = false;
+
+      app.use(function(req, res, next) {
+        next(new Error('msg'));
+      });
+      app.use(function(req, res, next) {
+        invoked = true;
+        next();
+      });
+      app.use(function(err, req, res, next) {
+        res.end(invoked ? 'invoked' : err.message);
+      });
+
+      request(app)
+          .get('/')
+          .expect(200, 'msg', done);
+    });
+
+    it('should start at error middleware declared after error', function(done) {
+      let invoked = false;
+
+      app.use(function(err, req, res, next) {
+        res.end('fail: ' + err.message);
+      });
+      app.use(function(req, res, next) {
+        next(new Error('boom!'));
+      });
+      app.use(function(err, req, res, next) {
+        res.end('pass: ' + err.message);
+      });
+
+      request(app)
+          .get('/')
+          .expect(200, 'pass: boom!', done);
+    });
+
+    it('should stack error fns', function(done) {
+      app.use(function(req, res, next) {
+        next(new Error('msg'));
+      });
+      app.use(function(err, req, res, next) {
+        res.setHeader('X-Error', err.message);
+        next(err);
+      });
+      app.use(function(err, req, res, next) {
+        res.end('got error ' + err.message);
+      });
+
+      request(app)
+          .get('/')
+          .expect('X-Error', 'msg')
+          .expect(200, 'got error msg', done);
+    });
+
+    it('should invoke error stack even when headers sent', function(done) {
+      app.use(function(req, res, next) {
+        res.end('0');
+        next(new Error('msg'));
+      });
+      app.use(function(err, req, res, next) {
+        done();
+      });
+
+      request(app)
+          .get('/')
+          .end(function() {
+          });
+    });
+  });
 });

@@ -1,7 +1,7 @@
 const rest = require('../../..'); // eonc-rest
 
 // Customer table
-let customers = {
+const customers = {
   1: {
     name: 'John Marvell',
     phone: '555-1234567',
@@ -11,11 +11,11 @@ let customers = {
 };
 
 // create the endpoint (api)
-let ep = rest.endpoint();
+const ep = rest.endpoint();
 
 // Handle Http GET method
 ep.onGet('id:ns1:id', function(req, res) {
-  let cust = customers[req.params.id];
+  const cust = customers[req.params.id];
   if (!cust)
     throw new rest.HttpError(400, 'Record not found');
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -61,7 +61,7 @@ ep.onPatch({
 
 // Handle Http DELETE method
 ep.onDelete('id:ns1:id', function(req, res) {
-  let cust = customers[req.params.id];
+  const cust = customers[req.params.id];
   if (!cust)
     throw new rest.HttpError(400, 'Record not found');
   delete customers[req.params.id];

@@ -2,21 +2,21 @@ const rest = require('../..');
 const http = require('http');
 
 // Create the server handler
-let app = rest();
+const app = rest();
 
 // Create a global schema
-let schema1 = rest.schema('ns1:app1.test.url');
+const schema1 = rest.schema('ns1:app1.test.url');
 
 // define global types
 schema1.define('Id', 'long');
-schema1.define('Name', 'string(3-30)');   // string value at least 3, max 30 chars
-schema1.define('PhoneNumber', 'string' + /\d{3}-\d{6,7}/);   // string value that matches given pattern, optional
+schema1.define('Name', 'string(3-30)'); // string value at least 3, max 30 chars
+schema1.define('PhoneNumber', 'string' + /\d{3}-\d{6,7}/); // string value that matches given pattern, optional
 
 // register endpoints (apis)
 app.use('/customer', require('./apis/customer'));
 
 //create node.js http server and listen on port
-let server = http.createServer(app);
+const server = http.createServer(app);
 
 // start http listener
 server.listen(5000, function() {
