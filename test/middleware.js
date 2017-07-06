@@ -176,7 +176,7 @@ describe('app', function() {
           .expect(500, /&lt;script&gt;alert\(\)&lt;\/script&gt;/, done);
     });
 
-    it('should use custom error code', function(done) {
+    it('should use custom error statusCode', function(done) {
       let app = rest();
 
       app.use(function(req, res, next) {

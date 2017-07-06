@@ -41,7 +41,7 @@ server.listen(5000, function() {
 });
 
 server.on('error', (err) => {
-  if (err.code === 'EACCES')
+  if (err.statusCode === 'EACCES')
     console.error(
         `Unable to open port (${err.port}) for listening. Access denied or port already in use.`);
   else

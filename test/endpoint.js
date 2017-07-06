@@ -149,7 +149,7 @@ describe('Endpoint', function() {
 
       request(app)
           .get('/blog')
-          .expect(400, '', done);
+          .expect(400, done);
     });
 
     it('should catch unknown errors', function(done) {
@@ -162,7 +162,7 @@ describe('Endpoint', function() {
 
       request(app)
           .get('/blog')
-          .expect(500, 'Error', done);
+          .expect(500, done);
     });
   });
 

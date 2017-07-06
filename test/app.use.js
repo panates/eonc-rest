@@ -143,7 +143,7 @@ describe('app.use(middleware)', function() {
 
     request(app)
         .get('/')
-        .expect(200, '1,2', done);
+        .expect(500, '1,2', done);
   });
 
   describe('with a eonc app', function() {
@@ -269,7 +269,7 @@ describe('app.use(middleware)', function() {
 
       request(app)
           .get('/')
-          .expect(200, 'msg', done);
+          .expect(500, 'msg', done);
     });
 
     it('should start at error middleware declared after error', function(done) {
@@ -287,7 +287,7 @@ describe('app.use(middleware)', function() {
 
       request(app)
           .get('/')
-          .expect(200, 'pass: boom!', done);
+          .expect(500, 'pass: boom!', done);
     });
 
     it('should stack error fns', function(done) {
@@ -305,7 +305,7 @@ describe('app.use(middleware)', function() {
       request(app)
           .get('/')
           .expect('X-Error', 'msg')
-          .expect(200, 'got error msg', done);
+          .expect(500, 'got error msg', done);
     });
 
     it('should invoke error stack even when headers sent', function(done) {
